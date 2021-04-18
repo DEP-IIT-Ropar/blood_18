@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "997052396237",
+    "project_id": "blooddonor-2d2a5",
+    "storage_bucket": "blooddonor-2d2a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997052396237:android:6f170bb49dd3a7c3b46f84",
+        "android_client_info": {
+          "package_name": "com.mahi00o7.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "997052396237-0qr0fciinbkmuc49drqf18jnv4a969uj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCp-GmMAaQmLLTpt5fVmFIsm3KPAgp_HQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997052396237-0qr0fciinbkmuc49drqf18jnv4a969uj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
