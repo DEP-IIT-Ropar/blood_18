@@ -19,8 +19,7 @@ class _HomePageMediState extends State<HomePageMedi> {
     super.initState();
   }
 
-  final _phoneController = TextEditingController();
-  final _codeController = TextEditingController();
+  final _emailController = TextEditingController();
   String bloodgrp;
   String phone;
   String name;
@@ -237,9 +236,9 @@ class _HomePageMediState extends State<HomePageMedi> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Mobile number',
+                      hintText: 'Email',
                     ),
-                    controller: _phoneController,
+                    controller: _emailController,
                   ),
                 ),
                 SizedBox(
