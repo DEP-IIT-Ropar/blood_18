@@ -5,9 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/screens/service/auth.dart';
 
 class HomePageMedi extends StatefulWidget {
-  final Function toggleView;
-  HomePageMedi({this.toggleView});
-
+  HomePageMedi({Key key, this.title, this.uid}) : super(key: key);
+  final String title;
+  final String uid;
   @override
   _HomePageMediState createState() => _HomePageMediState();
 }

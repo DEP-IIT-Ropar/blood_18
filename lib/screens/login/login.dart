@@ -2,11 +2,13 @@ import 'package:app/screens/authenticate/signup/signup.dart';
 import 'package:app/screens/authenticate/signup/signupmedi.dart';
 import 'package:app/screens/home/homedonor/home.dart';
 import 'package:app/screens/home/homemedi/homemedi.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:app/screens/service/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
+  LoginPage({Key key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _LoginPageState();
@@ -14,18 +16,37 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  String radioButtonItem = 'Medical Staff';
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController emailInputController;
+  TextEditingController pwdInputController;
+
   @override
-  void initState() {
+  initState() {
+    emailInputController = new TextEditingController();
+    pwdInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
   }
 
-  String radioButtonItem = 'Medical Staff';
-  final AuthService _auth = AuthService();
+  String emailValidator(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value)) {
+      return 'Email format is invalid';
+    } else {
+      return null;
+    }
+  }
 
-  // text field state
-  String email = '';
-  String password = '';
+  String pwdValidator(String value) {
+    if (value.length < 8) {
+      return 'Password must be longer than 8 characters';
+    } else {
+      return null;
+    }
+  }
 
   // Group Value for Radio Button.
   int id = 1;
@@ -76,149 +97,178 @@ class _LoginPageState extends State<LoginPage> {
               height: MediaQuery.of(context).size.height / 2,
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.only(top: 62),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1.2,
-                    height: 45,
-                    padding:
-                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 5)
-                        ]),
-                    child: TextField(
-                      onChanged: (val) {
-                        setState(() => email = val);
-                      },
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        icon: Icon(
-                          Icons.person,
-                          color: Colors.red[400],
-                        ),
-                        hintText: 'Username',
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1.2,
-                    height: 45,
-                    margin: EdgeInsets.only(top: 32),
-                    padding:
-                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 5)
-                        ]),
-                    child: TextField(
-                      obscureText: true,
-                      onChanged: (val) {
-                        setState(() => password = val);
-                      },
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        icon: Icon(
-                          Icons.vpn_key,
-                          color: Colors.red[400],
-                        ),
-                        hintText: 'Password',
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Radio(
-                        value: 1,
-                        groupValue: id,
-                        activeColor: Colors.red[400],
-                        onChanged: (val) {
-                          setState(() {
-                            radioButtonItem = 'Medical Staff';
-                            id = 1;
-                          });
-                        },
-                      ),
-                      Text(
-                        'Medical Staff',
-                        style: new TextStyle(fontSize: 17.0),
-                      ),
-                      Radio(
-                        value: 2,
-                        groupValue: id,
-                        activeColor: Colors.red[400],
-                        onChanged: (val) {
-                          setState(() {
-                            radioButtonItem = 'User';
-                            id = 2;
-                          });
-                        },
-                      ),
-                      Text(
-                        'User',
-                        style: new TextStyle(
-                          fontSize: 17.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 16, right: 32),
-                      child: Text(
-                        'Forgot Password ?',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  InkWell(
-                    onTap: () async {
-                      if (radioButtonItem == 'Medical Staff') {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePageMedi()))
-                            .then((result) {
-                          Navigator.of(context).pop();
-                        });
-                      } else {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePage()))
-                            .then((result) {
-                          Navigator.of(context).pop();
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: 45,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    Container(
                       width: MediaQuery.of(context).size.width / 1.2,
+                      height: 45,
+                      padding: EdgeInsets.only(
+                          top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.red[400],
-                              Colors.red[400],
-                            ],
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                          ]),
+                      child: TextFormField(
+                        controller: emailInputController,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: emailValidator,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          icon: Icon(
+                            Icons.person,
+                            color: Colors.red[400],
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(50))),
-                      child: Center(
-                        child: Text(
-                          'Login'.toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
+                          hintText: 'Email',
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      height: 45,
+                      margin: EdgeInsets.only(top: 32),
+                      padding: EdgeInsets.only(
+                          top: 4, left: 16, right: 16, bottom: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                          ]),
+                      child: TextFormField(
+                        controller: pwdInputController,
+                        obscureText: true,
+                        validator: pwdValidator,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          icon: Icon(
+                            Icons.vpn_key,
+                            color: Colors.red[400],
+                          ),
+                          hintText: 'Password',
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Radio(
+                          value: 1,
+                          groupValue: id,
+                          activeColor: Colors.red[400],
+                          onChanged: (val) {
+                            setState(() {
+                              radioButtonItem = 'Medical Staff';
+                              id = 1;
+                            });
+                          },
+                        ),
+                        Text(
+                          'Medical Staff',
+                          style: new TextStyle(fontSize: 17.0),
+                        ),
+                        Radio(
+                          value: 2,
+                          groupValue: id,
+                          activeColor: Colors.red[400],
+                          onChanged: (val) {
+                            setState(() {
+                              radioButtonItem = 'User';
+                              id = 2;
+                            });
+                          },
+                        ),
+                        Text(
+                          'User',
+                          style: new TextStyle(
+                            fontSize: 17.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 16, right: 32),
+                        child: Text(
+                          'Forgot Password ?',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    InkWell(
+                      onTap: () async {
+                        if (radioButtonItem == 'Medical Staff') {
+                          if (_formKey.currentState.validate()) {
+                            FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                    email: emailInputController.text,
+                                    password: pwdInputController.text)
+                                .then((currentUser) => Firestore.instance
+                                    .collection("mediInfo")
+                                    .document(currentUser.user.uid)
+                                    .get()
+                                    .then((DocumentSnapshot result) =>
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomePageMedi(
+                                                      uid: currentUser.user.uid,
+                                                    ))))
+                                    .catchError((err) => print(err)))
+                                .catchError((err) => print(err));
+                          }
+                        } else {
+                          if (_formKey.currentState.validate()) {
+                            FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                    email: emailInputController.text,
+                                    password: pwdInputController.text)
+                                .then((currentUser) => Firestore.instance
+                                    .collection("userInfo")
+                                    .document(currentUser.user.uid)
+                                    .get()
+                                    .then((DocumentSnapshot result) =>
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                      uid: currentUser.user.uid,
+                                                    ))))
+                                    .catchError((err) => print(err)))
+                                .catchError((err) => print(err));
+                          }
+                        }
+                      },
+                      child: Container(
+                        height: 45,
+                        width: MediaQuery.of(context).size.width / 1.2,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.red[400],
+                                Colors.red[400],
+                              ],
+                            ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(50))),
+                        child: Center(
+                          child: Text(
+                            'Login'.toUpperCase(),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(

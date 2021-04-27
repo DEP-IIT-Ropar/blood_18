@@ -2,7 +2,16 @@ import 'package:app/screens/home/homedonor/findmap.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  HomePage({Key key, this.title, this.uid}) : super(key: key);
+  //update the constructor to include the uid
+  final String title;
+  final String uid; //include this
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +33,7 @@ class HomePage extends StatelessWidget {
                       size: 50.0,
                     ),
                   ),
-                  accountName: Text('User Name'),
+                  accountName: Text('User name'),
                   accountEmail: Text('examlpe@gmail.com'),
                 ),
                 ListTile(
