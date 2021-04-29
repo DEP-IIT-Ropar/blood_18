@@ -24,6 +24,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController donatednoInputController;
   TextEditingController lastdateInputController;
   TextEditingController locationInputController;
+  TextEditingController ageInputController;
 
   @override
   initState() {
@@ -38,11 +39,11 @@ class _SignupPageState extends State<SignupPage> {
     donatednoInputController = new TextEditingController();
     lastdateInputController = new TextEditingController();
     locationInputController = new TextEditingController();
+    ageInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
   }
 
-  bool _success;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final List<String> bloodgrps = [
     'A+',
@@ -109,7 +110,7 @@ class _SignupPageState extends State<SignupPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 32, right: 32),
                       child: Text(
-                        'User Sign Up',
+                        'Donor Sign Up',
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
@@ -187,23 +188,15 @@ class _SignupPageState extends State<SignupPage> {
                           boxShadow: [
                             BoxShadow(color: Colors.black12, blurRadius: 5)
                           ]),
-                      child: DropdownButtonFormField(
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Select Blood Group',
-                          ),
-                          items: bloodgrps.map((bloodgroupInputController) {
-                            return DropdownMenuItem(
-                              value: bloodgroupInputController,
-                              child: Text('$bloodgroupInputController'),
-                            );
-                          }).toList(),
-                          validator: (val) =>
-                              val.isEmpty ? 'Select your blood group' : null,
-                          onChanged: (val) {
-                            setState(
-                                () => bloodgroupInputController.text = val);
-                          }),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Phone (+xx**********)',
+                        ),
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter mobile number' : null,
+                        controller: phoneInputController,
+                      ),
                     ),
                     SizedBox(
                       height: 5,
@@ -222,12 +215,47 @@ class _SignupPageState extends State<SignupPage> {
                       child: TextFormField(
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Phone as +91**********',
+                          hintText: 'Age',
                         ),
-                        validator: (val) =>
-                            val.isEmpty ? 'Enter mobile number' : null,
-                        controller: phoneInputController,
+                        controller: ageInputController,
+                        validator: (value) {
+                          if (int.parse(value) < 18) {
+                            return "You are below 18";
+                          }
+                        },
                       ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      height: 45,
+                      padding: EdgeInsets.only(
+                          top: 4, left: 16, right: 16, bottom: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                          ]),
+                      child: DropdownButtonFormField(
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Select Blood Group',
+                          ),
+                          items: bloodgrps.map((bloodgroupInputController) {
+                            return DropdownMenuItem(
+                              value: bloodgroupInputController,
+                              child: Text('$bloodgroupInputController'),
+                            );
+                          }).toList(),
+                          validator: (val) =>
+                              val.isEmpty ? 'Select your blood group' : null,
+                          onChanged: (val) {
+                            setState(
+                                () => bloodgroupInputController.text = val);
+                          }),
                     ),
                     SizedBox(
                       height: 5,
@@ -304,6 +332,7 @@ class _SignupPageState extends State<SignupPage> {
                                       "verified": verifiedInputController.text,
                                       "#donated": donatednoInputController.text,
                                       "location": locationInputController.text,
+                                      "age": ageInputController.text,
                                     })
                                     .then((result) => {
                                           Navigator.pushAndRemoveUntil(
@@ -328,7 +357,8 @@ class _SignupPageState extends State<SignupPage> {
                                           alcohalicInputController.clear(),
                                           verifiedInputController.clear(),
                                           donatednoInputController.clear(),
-                                          locationInputController.clear()
+                                          locationInputController.clear(),
+                                          ageInputController.clear()
                                         })
                                     .catchError((err) => print(err)))
                                 .catchError((err) => print(err));

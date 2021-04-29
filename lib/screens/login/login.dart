@@ -2,6 +2,7 @@ import 'package:app/screens/authenticate/signup/signup.dart';
 import 'package:app/screens/authenticate/signup/signupmedi.dart';
 import 'package:app/screens/home/homedonor/home.dart';
 import 'package:app/screens/home/homemedi/homemedi.dart';
+import 'package:app/screens/seeker/loginseek.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -176,13 +177,13 @@ class _LoginPageState extends State<LoginPage> {
                           activeColor: Colors.red[400],
                           onChanged: (val) {
                             setState(() {
-                              radioButtonItem = 'User';
+                              radioButtonItem = 'Donor';
                               id = 2;
                             });
                           },
                         ),
                         Text(
-                          'User',
+                          'Donor',
                           style: new TextStyle(
                             fontSize: 17.0,
                           ),
@@ -199,7 +200,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    Spacer(),
+                    SizedBox(
+                      height: 10,
+                    ),
                     InkWell(
                       onTap: () async {
                         if (radioButtonItem == 'Medical Staff') {
@@ -272,13 +275,32 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             SizedBox(
-              height: 50,
+              height: 15,
             ),
             InkWell(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text("Don't have an account ?"),
+                  Text("Looking for Donor? "),
+                  Text(
+                    "Guest Log In",
+                    style: TextStyle(color: Colors.red[400]),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginSeek()));
+              },
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            InkWell(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Don't have an account? "),
                   Text(
                     "Sign Up",
                     style: TextStyle(color: Colors.red[400]),
@@ -309,7 +331,7 @@ showAlertDialog(BuildContext context) {
     },
   );
   Widget optionTwo = SimpleDialogOption(
-    child: const Text('User'),
+    child: const Text('Donor'),
     onPressed: () {
       Navigator.push(
               context, MaterialPageRoute(builder: (context) => SignupPage()))

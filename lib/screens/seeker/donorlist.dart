@@ -1,32 +1,26 @@
-import 'package:app/screens/home/homedonor/findmap.dart';
+import 'package:app/screens/home/homedonor/findonor.dart';
 import 'package:app/screens/login/login.dart';
+import 'package:app/screens/seeker/homeseek.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app/screens/service/auth.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
-class HomePage extends StatefulWidget {
-//update the constructor to include the uid
-  final String title;
-  final String uid; //include this
-  HomePage({Key key, this.title, this.uid}) : super(key: key);
+class DonorList extends StatefulWidget {
+  final FirebaseUser user;
 
+  DonorList({this.user});
   @override
-  _HomePageState createState() => _HomePageState();
+  _DonorListState createState() => _DonorListState();
 }
 
-class _HomePageState extends State<HomePage> {
-  DocumentSnapshot variable;
-  void getlocation(id) async {
-    variable =
-        await Firestore.instance.collection('userInfo').document(id).get();
-    print(variable.data['location'].toString());
-  }
-
+class _DonorListState extends State<DonorList> {
   @override
   void initState() {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
-    getlocation(widget.uid);
   }
 
   @override
@@ -50,31 +44,24 @@ class _HomePageState extends State<HomePage> {
                       size: 50.0,
                     ),
                   ),
-                  accountName: Text("name"),
-                  accountEmail: Text("email"),
+                  accountName: Text('User Name'),
+                  accountEmail: Text(
+                    "${widget.user.phoneNumber}",
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
                 ListTile(
                   leading: CircleAvatar(
                     backgroundColor: Colors.red[400],
                     child: Icon(
-                      Icons.person_outline,
+                      Icons.person,
                       color: Colors.white,
                       size: 30.0,
                     ),
                   ),
-                  title: Text("Profile Settings"),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.map,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                  ),
-                  title: Text("Update Location"),
+                  title: Text("Request Status"),
                   onTap: () {},
                 ),
                 Divider(),
@@ -115,42 +102,25 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
-        title: Text("Home Page"),
+        title: Text("Nearby Donors"),
         backgroundColor: Colors.red[400],
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red[400],
         onPressed: () async {
-          Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => FindLocation()))
-              .then((result) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomeSeek(
+                        user: widget.user,
+                      ))).then((result) {
             Navigator.of(context).pop();
           });
         },
         child: Icon(Icons.search, color: Colors.white),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Colors.red[400],
-            ),
-            title: Text(
-              'Home',
-              style: TextStyle(
-                color: Colors.red[400],
-              ),
-            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            title: Text('History'),
-          ),
-        ],
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: ListView(
         children: <Widget>[
           SizedBox(
@@ -162,7 +132,7 @@ class _HomePageState extends State<HomePage> {
             ),
             child: ListTile(
               leading: Icon(Icons.person),
-              title: Text("Vikram"),
+              title: Text("Mohit Keshri"),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -178,18 +148,11 @@ class _HomePageState extends State<HomePage> {
                   Container(
                       child: Column(children: <Widget>[
                     Text(
-                        "No. of times donated - 5 \nLast Donated - 14/04/2021 \nAlcohalic/Smoker - Yes"),
+                        "No. of times donated - 5 \nLast Donated - 10/04/2021 \nAlcohalic/Smoker - NO"),
                     new Row(
                       children: <Widget>[
                         new RaisedButton(
-                          child: Text("Accept"),
-                          onPressed: () {},
-                        ),
-                        Divider(
-                          thickness: 20,
-                        ),
-                        new RaisedButton(
-                          child: Text("Decline"),
+                          child: Text("Request"),
                           onPressed: () {},
                         ),
                       ],
@@ -201,9 +164,9 @@ class _HomePageState extends State<HomePage> {
           ),
           ListTile(
             leading: Icon(Icons.person),
-            title: Text("David"),
+            title: Text("Prakash Raj"),
             trailing: Text(
-              "4",
+              "4.5",
               style: TextStyle(color: Colors.green),
             ),
             subtitle: Column(
@@ -215,14 +178,7 @@ class _HomePageState extends State<HomePage> {
                   new Row(
                     children: <Widget>[
                       new RaisedButton(
-                        child: Text("Accept"),
-                        onPressed: () {},
-                      ),
-                      Divider(
-                        thickness: 20,
-                      ),
-                      new RaisedButton(
-                        child: Text("Decline"),
+                        child: Text("Request"),
                         onPressed: () {},
                       ),
                     ],
@@ -241,28 +197,16 @@ showAlertDialog(BuildContext context) {
   // set up the list options
   Widget optionOne = SimpleDialogOption(
     child: const Text('YES'),
-    onPressed: () {
-      Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()))
-          .then((result) {
-        Navigator.of(context).pop();
-      });
-    },
+    onPressed: () {},
   );
   Widget optionTwo = SimpleDialogOption(
     child: const Text('NO'),
-    onPressed: () {
-      Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()))
-          .then((result) {
-        Navigator.of(context).pop();
-      });
-    },
+    onPressed: () {},
   );
 
   // set up the SimpleDialog
   SimpleDialog dialog = SimpleDialog(
-    title: const Text('Willing to donate?'),
+    title: const Text('Are you sure to request?'),
     children: <Widget>[
       optionOne,
       optionTwo,

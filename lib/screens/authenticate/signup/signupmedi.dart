@@ -181,7 +181,7 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       child: TextFormField(
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Phone as +91**********',
+                          hintText: 'Phone (+xx**********)',
                         ),
                         validator: (val) =>
                             val.isEmpty ? 'Enter mobile number' : null,

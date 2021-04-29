@@ -8,6 +8,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class FindLocation extends StatelessWidget {
+  final FirebaseUser user;
+
+  FindLocation({this.user});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
