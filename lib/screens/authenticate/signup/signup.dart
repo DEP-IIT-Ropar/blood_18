@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+import 'dart:collection';
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key key}) : super(key: key);
@@ -24,6 +27,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController donatednoInputController;
   TextEditingController lastdateInputController;
   TextEditingController locationInputController;
+  GeoPoint location;
   TextEditingController ageInputController;
 
   @override
@@ -38,12 +42,20 @@ class _SignupPageState extends State<SignupPage> {
     verifiedInputController = new TextEditingController();
     donatednoInputController = new TextEditingController();
     lastdateInputController = new TextEditingController();
-    locationInputController = new TextEditingController();
     ageInputController = new TextEditingController();
+    locationInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
   }
 
+  Set<Marker> _markers = HashSet<Marker>();
+  int _markerIdCounter = 1;
+  bool _isMarker = false;
+  LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
+  GoogleMapController _controller;
+  Location _location = Location();
+  LatLng position;
+  GeoPoint donorlocation;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final List<String> bloodgrps = [
     'A+',
@@ -74,6 +86,34 @@ class _SignupPageState extends State<SignupPage> {
       return null;
     }
   }
+
+  void _setMarkers(LatLng point) {
+    final String markerIdVal = 'marker_id_$_markerIdCounter';
+    _markerIdCounter++;
+    setState(() {
+      print(
+          'Marker | Latitude: ${point.latitude}  Longitude: ${point.longitude}');
+      _markers.add(
+        Marker(
+          markerId: MarkerId(markerIdVal),
+          position: point,
+        ),
+      );
+    });
+  }
+
+  void _onMapCreated(GoogleMapController _cntlr) {
+    _controller = _cntlr;
+    _location.onLocationChanged.listen((l) {
+      _controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: LatLng(l.latitude, l.longitude), zoom: 15),
+        ),
+      );
+    });
+  }
+
+  List<Marker> myMarker = [];
 
   @override
   Widget build(BuildContext context) {
@@ -260,6 +300,32 @@ class _SignupPageState extends State<SignupPage> {
                     SizedBox(
                       height: 5,
                     ),
+                    /*Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      height: 45,
+                      padding: EdgeInsets.only(
+                          top: 4, left: 16, right: 16, bottom: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                          ]),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "$locationInputController".split(',')[0],
+                          suffixIcon: IconButton(
+                            onPressed: () => getLocation(context),
+                            icon: Icon(
+                              Icons.location_city,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),*/
                     Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: 45,
@@ -331,7 +397,7 @@ class _SignupPageState extends State<SignupPage> {
                                           alcohalicInputController.text,
                                       "verified": verifiedInputController.text,
                                       "#donated": donatednoInputController.text,
-                                      "location": locationInputController.text,
+                                      "location": locationInputController,
                                       "age": ageInputController.text,
                                     })
                                     .then((result) => {
@@ -357,7 +423,6 @@ class _SignupPageState extends State<SignupPage> {
                                           alcohalicInputController.clear(),
                                           verifiedInputController.clear(),
                                           donatednoInputController.clear(),
-                                          locationInputController.clear(),
                                           ageInputController.clear()
                                         })
                                     .catchError((err) => print(err)))
@@ -435,5 +500,60 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
     );
+  }
+
+  getLocation(BuildContext context) async {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Tap Your Location"),
+        backgroundColor: Colors.red[400],
+        centerTitle: true,
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.red[400],
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Icon(Icons.done, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          children: [
+            GoogleMap(
+              initialCameraPosition:
+                  CameraPosition(target: _initialcameraposition),
+              mapType: MapType.normal,
+              onMapCreated: _onMapCreated,
+              markers: Set.from(myMarker),
+              onTap: _handleTap,
+              myLocationEnabled: true,
+            ),
+          ],
+        ),
+      ),
+    );
+    /*if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });*/
+  }
+
+  _handleTap(LatLng tappedPoint) {
+    setState(() {
+      myMarker = [];
+      myMarker.add(Marker(
+        markerId: MarkerId(tappedPoint.toString()),
+        position: tappedPoint,
+      ));
+      position = tappedPoint;
+      donorlocation = GeoPoint(position.latitude, position.longitude);
+      setState(() {
+        //locationInputController = donorlocation;
+      });
+      print(donorlocation);
+    });
   }
 }

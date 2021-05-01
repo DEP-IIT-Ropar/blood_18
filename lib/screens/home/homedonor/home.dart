@@ -1,4 +1,4 @@
-import 'package:app/screens/home/homedonor/findmap.dart';
+import 'package:app/screens/home/homedonor/updatelocation.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,16 +17,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DocumentSnapshot variable;
-  void getlocation(id) async {
-    variable =
-        await Firestore.instance.collection('userInfo').document(id).get();
-    print(variable.data['location'].toString());
+  void database() async {
+    variable = await Firestore.instance
+        .collection('userInfo')
+        .document(widget.uid)
+        .get();
+    if (variable.data['location'] == null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UpdateLocation(
+                    uid: widget.uid,
+                  ))).then((result) {
+        Navigator.of(context).pop();
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    getlocation(widget.uid);
+    //database();
   }
 
   @override
@@ -50,8 +61,20 @@ class _HomePageState extends State<HomePage> {
                       size: 50.0,
                     ),
                   ),
-                  accountName: Text("name"),
-                  accountEmail: Text("email"),
+                  accountName: Text("User"
+                      /*"${variable.data['name']}",
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  */
+                      ),
+                  accountEmail: Text("Email"
+                      /*"${variable.data['name']}",
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  */
+                      ),
                 ),
                 ListTile(
                   leading: CircleAvatar(
@@ -75,7 +98,16 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   title: Text("Update Location"),
-                  onTap: () {},
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UpdateLocation(
+                                  uid: widget.uid,
+                                ))).then((result) {
+                      Navigator.of(context).pop();
+                    });
+                  },
                 ),
                 Divider(),
                 ListTile(
@@ -119,18 +151,6 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.red[400],
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red[400],
-        onPressed: () async {
-          Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => FindLocation()))
-              .then((result) {
-            Navigator.of(context).pop();
-          });
-        },
-        child: Icon(Icons.search, color: Colors.white),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(

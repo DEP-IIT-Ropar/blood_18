@@ -1,12 +1,14 @@
 import 'package:app/screens/home/homedonor/findonor.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:app/screens/seeker/donorlist.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/screens/service/auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'dart:collection';
 
 class HomeSeek extends StatefulWidget {
   final FirebaseUser user;
@@ -24,9 +26,14 @@ class _HomeSeekState extends State<HomeSeek> {
   }
 
   final _nameController = TextEditingController();
+  Set<Marker> _markers = HashSet<Marker>();
+  int _markerIdCounter = 1;
+  bool _isMarker = false;
   LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
   GoogleMapController _controller;
   Location _location = Location();
+  LatLng position;
+  GeoPoint donorlocation;
   String bloodgrp;
   String dist;
   String minage;
@@ -44,6 +51,21 @@ class _HomeSeekState extends State<HomeSeek> {
     'O-'
   ];
 
+  void _setMarkers(LatLng point) {
+    final String markerIdVal = 'marker_id_$_markerIdCounter';
+    _markerIdCounter++;
+    setState(() {
+      print(
+          'Marker | Latitude: ${point.latitude}  Longitude: ${point.longitude}');
+      _markers.add(
+        Marker(
+          markerId: MarkerId(markerIdVal),
+          position: point,
+        ),
+      );
+    });
+  }
+
   void _onMapCreated(GoogleMapController _cntlr) {
     _controller = _cntlr;
     _location.onLocationChanged.listen((l) {
@@ -54,6 +76,8 @@ class _HomeSeekState extends State<HomeSeek> {
       );
     });
   }
+
+  List<Marker> myMarker = [];
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +158,7 @@ class _HomeSeekState extends State<HomeSeek> {
         ),
       ),
       appBar: AppBar(
-        title: Text("Get Your Location"),
+        title: Text("Tap Your Location"),
         backgroundColor: Colors.red[400],
         centerTitle: true,
       ),
@@ -154,6 +178,8 @@ class _HomeSeekState extends State<HomeSeek> {
                   CameraPosition(target: _initialcameraposition),
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
+              markers: Set.from(myMarker),
+              onTap: _handleTap,
               myLocationEnabled: true,
             ),
           ],
@@ -162,10 +188,23 @@ class _HomeSeekState extends State<HomeSeek> {
     );
   }
 
+  _handleTap(LatLng tappedPoint) {
+    setState(() {
+      myMarker = [];
+      myMarker.add(Marker(
+        markerId: MarkerId(tappedPoint.toString()),
+        position: tappedPoint,
+      ));
+      position = tappedPoint;
+      print(position);
+      donorlocation = GeoPoint(position.latitude, position.longitude);
+    });
+  }
+
   void _regis() async {
-    var pos = await _location.getLocation();
+    /*var pos = await _location.getLocation();
     double lat = pos.latitude;
-    double lng = pos.longitude;
+    double lng = pos.longitude;*/
     showModalBottomSheet(
         context: context,
         builder: (context) {
