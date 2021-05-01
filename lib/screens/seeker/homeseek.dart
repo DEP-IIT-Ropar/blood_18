@@ -33,7 +33,7 @@ class _HomeSeekState extends State<HomeSeek> {
   GoogleMapController _controller;
   Location _location = Location();
   LatLng position;
-  GeoPoint donorlocation;
+  GeoPoint seekerlocation;
   String bloodgrp;
   String dist;
   String minage;
@@ -197,7 +197,7 @@ class _HomeSeekState extends State<HomeSeek> {
       ));
       position = tappedPoint;
       print(position);
-      donorlocation = GeoPoint(position.latitude, position.longitude);
+      seekerlocation = GeoPoint(position.latitude, position.longitude);
     });
   }
 
