@@ -68,6 +68,8 @@ class _SignupPageState extends State<SignupPage> {
     'O-'
   ];
 
+  final List<String> alco_smoker = ['Yes', 'No'];
+
   String emailValidator(String value) {
     Pattern pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -300,7 +302,7 @@ class _SignupPageState extends State<SignupPage> {
                     SizedBox(
                       height: 5,
                     ),
-                    /*Container(
+                    Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: 45,
                       padding: EdgeInsets.only(
@@ -311,21 +313,54 @@ class _SignupPageState extends State<SignupPage> {
                           boxShadow: [
                             BoxShadow(color: Colors.black12, blurRadius: 5)
                           ]),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "$locationInputController".split(',')[0],
-                          suffixIcon: IconButton(
-                            onPressed: () => getLocation(context),
-                            icon: Icon(
-                              Icons.location_city,
-                            ),
+                      child: DropdownButtonFormField(
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Are you Alcohalic/Smoker?',
                           ),
-                        ),
-                      ),
+                          items: alco_smoker.map((alcohalicInputController) {
+                            return DropdownMenuItem(
+                              value: alcohalicInputController,
+                              child: Text('$alcohalicInputController'),
+                            );
+                          }).toList(),
+                          validator: (val) =>
+                              val.isEmpty ? 'Select your blood group' : null,
+                          onChanged: (val) {
+                            setState(() => alcohalicInputController.text = val);
+                          }),
                     ),
+                    /*SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      height: 45,
+                      padding: EdgeInsets.only(
+                          top: 4, left: 16, right: 16, bottom: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                          ]),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            hintText:
+                                "${location.latitude}, ${location.longitude}",
+                            //"location",
+                            suffixIcon: IconButton(
+                              onPressed: () => getLocation(context),
+                              icon: Icon(
+                                Icons.location_city,
+                              ),
+                            ),
+                            errorText: (true) ? "Error true" : "Error false"),
+                      ),
+                    ),*/
                     SizedBox(
                       height: 5,
-                    ),*/
+                    ),
                     Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: 45,
@@ -385,7 +420,7 @@ class _SignupPageState extends State<SignupPage> {
                                     password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
                                     .collection("userInfo")
-                                    .document(currentUser.user.uid)
+                                    .document(currentUser.user.email)
                                     .setData({
                                       "name": fullNameInputController.text,
                                       "phone": phoneInputController.text,
@@ -397,8 +432,10 @@ class _SignupPageState extends State<SignupPage> {
                                           alcohalicInputController.text,
                                       "verified": verifiedInputController.text,
                                       "#donated": donatednoInputController.text,
-                                      "location": locationInputController,
+                                      "location": null,
                                       "age": ageInputController.text,
+                                      "userid": currentUser.user.uid,
+                                      "email": currentUser.user.email,
                                     })
                                     .then((result) => {
                                           Navigator.pushAndRemoveUntil(
@@ -410,7 +447,7 @@ class _SignupPageState extends State<SignupPage> {
                                                             fullNameInputController
                                                                 .text,
                                                         uid: currentUser
-                                                            .user.uid,
+                                                            .user.email,
                                                       )),
                                               (_) => false),
                                           fullNameInputController.clear(),
@@ -423,6 +460,7 @@ class _SignupPageState extends State<SignupPage> {
                                           alcohalicInputController.clear(),
                                           verifiedInputController.clear(),
                                           donatednoInputController.clear(),
+                                          locationInputController.clear(),
                                           ageInputController.clear()
                                         })
                                     .catchError((err) => print(err)))
@@ -551,7 +589,8 @@ class _SignupPageState extends State<SignupPage> {
       position = tappedPoint;
       donorlocation = GeoPoint(position.latitude, position.longitude);
       setState(() {
-        //locationInputController = donorlocation;
+        location = donorlocation;
+        print(location);
       });
       print(donorlocation);
     });

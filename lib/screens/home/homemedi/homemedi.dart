@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/screens/service/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePageMedi extends StatefulWidget {
   HomePageMedi({Key key, this.title, this.uid}) : super(key: key);
@@ -12,17 +13,18 @@ class HomePageMedi extends StatefulWidget {
   _HomePageMediState createState() => _HomePageMediState();
 }
 
-class _HomePageMediState extends State<HomePageMedi> {
-  @override
-  void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
-    super.initState();
-  }
+class ObjectToUpdate {
+  String field1 = "email";
+  String field2 = "verified";
 
-  final _emailController = TextEditingController();
-  String bloodgrp;
-  String phone;
-  String name;
+  ObjectToUpdate(this.field1, this.field2);
+}
+
+class _HomePageMediState extends State<HomePageMedi> {
+  TextEditingController bloodgroupInputController;
+  TextEditingController fullNameInputController;
+  TextEditingController ageInputController;
+  TextEditingController emailInputController;
   DateTime selectedDate = DateTime.now();
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
@@ -36,6 +38,56 @@ class _HomePageMediState extends State<HomePageMedi> {
     'O+',
     'O-'
   ];
+
+  @override
+  void initState() {
+    bloodgroupInputController = new TextEditingController();
+    fullNameInputController = new TextEditingController();
+    ageInputController = new TextEditingController();
+    emailInputController = new TextEditingController();
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    super.initState();
+  }
+
+  String emailValidator(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value)) {
+      return 'Email format is invalid';
+    } else {
+      return null;
+    }
+  }
+
+  /*Future<void> updateWhere(String valueForWhere, String valueToUpdate) async {
+    try {
+      List<ObjectToUpdate> items;
+      var query = await Firestore.instance
+          .collection('userInfo')
+          .where(ObjectToUpdate.field1, isEqualTo: valueForWhere)
+          .getDocuments();
+
+      if (query.documents.isEmpty)
+        return;
+      else {
+        items = query.documents
+            .map((item) =>
+                ObjectToUpdate.deserialize(item.data, item.documentID))
+            .toList();
+      }
+
+      for (var item in items) {
+        item.field2 = valueToUpdate;
+        Firestore.instance
+            .collection('CollectionName')
+            .document(item.uid)
+            .updateData(item.serialize());
+      }
+    } catch (e) {
+      print(e);
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +237,32 @@ class _HomePageMediState extends State<HomePageMedi> {
                       validator: (val) =>
                           val.isEmpty ? 'Enter Donor Name' : null,
                       onChanged: (val) {
-                        setState(() => name = val);
+                        setState(() => fullNameInputController.text = val);
+                      }),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height: 45,
+                  padding:
+                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 5)
+                      ]),
+                  child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Age',
+                      ),
+                      validator: (val) =>
+                          val.isEmpty ? 'Enter Donor Age' : null,
+                      onChanged: (val) {
+                        setState(() => ageInputController.text = val);
                       }),
                 ),
                 SizedBox(
@@ -216,7 +293,7 @@ class _HomePageMediState extends State<HomePageMedi> {
                       validator: (val) =>
                           val.isEmpty ? 'Select donor blood group' : null,
                       onChanged: (val) {
-                        setState(() => bloodgrp = val);
+                        setState(() => bloodgroupInputController.text = val);
                       }),
                 ),
                 SizedBox(
@@ -238,13 +315,15 @@ class _HomePageMediState extends State<HomePageMedi> {
                       border: InputBorder.none,
                       hintText: 'Email',
                     ),
-                    controller: _emailController,
+                    controller: emailInputController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: emailValidator,
                   ),
                 ),
                 SizedBox(
                   height: 5.0,
                 ),
-                Container(
+                /*Container(
                   width: MediaQuery.of(context).size.width / 1.2,
                   height: 45,
                   padding:
@@ -255,7 +334,7 @@ class _HomePageMediState extends State<HomePageMedi> {
                       boxShadow: [
                         BoxShadow(color: Colors.black12, blurRadius: 5)
                       ]),
-                  child: TextField(
+                  child: TextFormField(
                     decoration: InputDecoration(
                       hintText: "${selectedDate.toLocal()}".split(' ')[0],
                       suffixIcon: IconButton(
@@ -269,9 +348,39 @@ class _HomePageMediState extends State<HomePageMedi> {
                 ),
                 SizedBox(
                   height: 20.0,
-                ),
+                ),*/
                 InkWell(
                   onTap: () async {
+                    /*try {
+                      var query = await Firestore.instance
+                          .collection('UserInfo')
+                          .where("name", isEqualTo: name)
+                          .where("email", isEqualTo: _emailController)
+                          .getDocuments();
+                      var userid = query.documents.documentID.uid;
+                      if (query.documents.isEmpty)
+                        return;
+                      else {
+                        items = query.documents
+                            .map((item) => ObjectToUpdate.deserialize(
+                                item.data, item.documentID))
+                            .toList();
+                      }
+
+                      for (var item in items) {
+                        item.field2 = valueToUpdate;
+                        Firestore.instance
+                            .collection('CollectionName')
+                            .document(item.uid)
+                            .updateData(item.serialize());
+                      }
+                    } catch (e) {
+                      print(e);
+                    }*/
+                    await Firestore.instance
+                        .collection('userInfo')
+                        .document(emailInputController.text)
+                        .updateData({'verified': "Yes"});
                     Navigator.push(
                             context,
                             MaterialPageRoute(

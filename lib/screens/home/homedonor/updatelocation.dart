@@ -30,7 +30,7 @@ class _UpdateLocationState extends State<UpdateLocation> {
 
   @override
   void initState() {
-    //database();
+    database();
     SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
   }

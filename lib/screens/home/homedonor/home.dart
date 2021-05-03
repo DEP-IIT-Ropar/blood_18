@@ -36,8 +36,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    database();
     super.initState();
-    //database();
   }
 
   @override
