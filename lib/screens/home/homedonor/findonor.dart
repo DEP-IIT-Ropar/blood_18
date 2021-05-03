@@ -1,5 +1,7 @@
 import 'package:app/screens/home/homedonor/home.dart';
+import 'package:app/screens/home/homedonor/updatelocation.dart';
 import 'package:app/screens/login/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,35 +9,38 @@ import 'package:app/screens/service/auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
-class Findonor extends StatelessWidget {
+class FindDonor extends StatefulWidget {
+//update the constructor to include the uid
+  final String title;
+  final String uid; //include this
+  FindDonor({Key key, this.title, this.uid}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Donors(),
-    );
+  _FindDonorState createState() => _FindDonorState();
+}
+
+class _FindDonorState extends State<FindDonor> {
+  DocumentSnapshot variable;
+  void database() async {
+    variable = await Firestore.instance
+        .collection('userInfo')
+        .document(widget.uid)
+        .get();
+    if (variable.data['location'] == null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UpdateLocation(
+                    uid: widget.uid,
+                  ))).then((result) {
+        Navigator.of(context).pop();
+      });
+    }
   }
-}
 
-class Donors extends StatefulWidget {
-  //final String uid;
-  //Donors({this.uid});
-  //collection ref
-
-  /*final CollectionReference donorCollection =
-      Firestore.instance.collection('userInfo');*/
-
-  final Function toggleView;
-  Donors({this.toggleView});
-
-  @override
-  _DonorsState createState() => _DonorsState();
-}
-
-class _DonorsState extends State<Donors> {
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    database();
     super.initState();
   }
 

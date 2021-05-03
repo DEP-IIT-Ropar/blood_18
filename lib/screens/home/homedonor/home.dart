@@ -1,3 +1,4 @@
+import 'package:app/screens/home/homedonor/requestdonor.dart';
 import 'package:app/screens/home/homedonor/updatelocation.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:flutter/material.dart';
@@ -151,6 +152,21 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.red[400],
         centerTitle: true,
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.red[400],
+        onPressed: () async {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => RequestDonor(
+                        uid: widget.uid,
+                      ))).then((result) {
+            Navigator.of(context).pop();
+          });
+        },
+        child: Icon(Icons.search, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
