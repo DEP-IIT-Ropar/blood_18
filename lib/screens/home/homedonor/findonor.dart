@@ -12,8 +12,9 @@ import 'package:location/location.dart';
 class FindDonor extends StatefulWidget {
 //update the constructor to include the uid
   final String title;
-  final String uid; //include this
-  FindDonor({Key key, this.title, this.uid}) : super(key: key);
+  final String uid;
+  final String requestid;//include this
+  FindDonor({Key key, this.title, this.uid, this.requestid}) : super(key: key);
 
   @override
   _FindDonorState createState() => _FindDonorState();
@@ -178,7 +179,13 @@ class _FindDonorState extends State<FindDonor> {
                       children: <Widget>[
                         new RaisedButton(
                           child: Text("Request"),
-                          onPressed: () {},
+                          onPressed: () async{
+                              await Firestore.instance.collection("request_donor").add({
+
+                              'donoremail': "exampleemail",
+                              'requestid' : this.widget.requestid,
+                            });
+                          },
                         ),
                       ],
                     ),

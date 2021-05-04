@@ -259,10 +259,10 @@ class _RequestDonorState extends State<RequestDonor> {
                   child: TextFormField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Enter Your Name',
+                        hintText: 'Enter the reason',
                       ),
                       validator: (val) =>
-                          val.isEmpty ? 'Enter Your Name' : null,
+                          val.isEmpty ? 'Enter the reason' : null,
                       onChanged: (val) {
                         setState(() => _nameController.text = val);
                       }),
@@ -352,7 +352,25 @@ class _RequestDonorState extends State<RequestDonor> {
                   height: 20.0,
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () async {
+                    final requestid = await Firestore.instance.collection("request").add({
+                      'blood group': bloodgrp,
+                      'email': this.widget.uid,
+                      'location': seekerlocation,
+                      'maxdistance': dist,
+                      'min age': minage,
+                      'reason': _nameController.text,
+                    });
+                    Navigator.push(
+                      context,
+                    MaterialPageRoute(
+                      builder: (context) => FindDonor(
+                        uid: widget.uid,
+                        requestid : requestid.documentID,
+                          ))).then((result) {
+                        Navigator.of(context).pop();
+                      });
+                  },
                   child: Container(
                     height: 45,
                     width: MediaQuery.of(context).size.width / 1.2,
