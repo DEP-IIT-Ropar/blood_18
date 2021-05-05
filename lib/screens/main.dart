@@ -1,4 +1,4 @@
-import 'package:app/screens/home/homemedi/medidash.dart';
+import 'package:app/screens/home/homemedi/homemedi.dart';
 import 'package:app/screens/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:app/screens/home/homedonor/home.dart';
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(home: Wrapper(), routes: <String, WidgetBuilder>{
       '/home': (BuildContext context) => HomePage(),
-      '/homemedi': (BuildContext context) => MediDash(),
+      '/homemedi': (BuildContext context) => HomePageMedi(),
       '/login': (BuildContext context) => LoginPage(),
     });
   }

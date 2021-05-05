@@ -6,14 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/screens/service/auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class FindDonor extends StatefulWidget {
 //update the constructor to include the uid
   final String title;
   final String uid;
-  final String requestid; //include this
+  final String requestid;//include this
   FindDonor({Key key, this.title, this.uid, this.requestid}) : super(key: key);
 
   @override
@@ -22,6 +24,35 @@ class FindDonor extends StatefulWidget {
 
 class _FindDonorState extends State<FindDonor> {
   DocumentSnapshot variable;
+  DocumentSnapshot request;
+  Future <QuerySnapshot> donlist;
+  var collectionReference = Firestore.instance.collection('userInfo');
+  final geo = Geoflutterfire();
+  var queryref ;
+  Future<List<DocumentSnapshot>> listss;
+  int b = 0;
+
+
+  void dte()async{
+    request = await Firestore.instance
+        .collection('request')
+        .document(widget.requestid)
+        .get();
+
+    queryref = Firestore.instance.collection('userInfo')
+        .where('age', isGreaterThanOrEqualTo: request.data['min age'])
+        .where('bloodgroup', isEqualTo: request.data['blood group']);
+    listss = geo
+        .collection(collectionRef: queryref)
+        .within(center: request.data['location'], radius: request.data['maxdistance'], field: 'location').first;
+
+    print(listss);
+    b = 1;
+
+  }
+
+
+
   void database() async {
     variable = await Firestore.instance
         .collection('userInfo')
@@ -39,9 +70,11 @@ class _FindDonorState extends State<FindDonor> {
     }
   }
 
+
   @override
   void initState() {
-    database();
+
+    dte();
     super.initState();
   }
 
@@ -139,17 +172,20 @@ class _FindDonorState extends State<FindDonor> {
         backgroundColor: Colors.red[400],
         onPressed: () async {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HomePage(
-                        uid: widget.uid,
-                      ))).then((result) {
+                  context, MaterialPageRoute(builder: (context) => HomePage(
+            title: variable.data['name'],
+            uid: this.widget.uid,
+          )))
+              .then((result) {
             Navigator.of(context).pop();
           });
         },
         child: Icon(Icons.home, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
+
+
       body: ListView(
         children: <Widget>[
           SizedBox(
@@ -176,24 +212,24 @@ class _FindDonorState extends State<FindDonor> {
                 children: <Widget>[
                   Container(
                       child: Column(children: <Widget>[
-                    Text(
-                        "No. of times donated - 5 \nLast Donated - 10/04/2021 \nAlcohalic/Smoker - NO"),
-                    new Row(
-                      children: <Widget>[
-                        new RaisedButton(
-                          child: Text("Request"),
-                          onPressed: () async {
-                            await Firestore.instance
-                                .collection("request_donor")
-                                .add({
-                              'donoremail': "exampleemail",
-                              'requestid': this.widget.requestid,
-                            });
-                          },
+                        Text(
+                            "No. of times donated - 5 \nLast Donated - 10/04/2021 \nAlcohalic/Smoker - NO"),
+                        new Row(
+                          children: <Widget>[
+                            new RaisedButton(
+                              child: Text("Request"),
+                              onPressed: () async{
+
+                                await Firestore.instance.collection("request_donor").add({
+
+                                  'donoremail': "exampleemail2",
+                                  'requestid' : request.data['email'],
+                                });
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ]))
+                      ]))
                 ],
               ),
             ),
@@ -209,22 +245,25 @@ class _FindDonorState extends State<FindDonor> {
               children: <Widget>[
                 Container(
                     child: Column(children: <Widget>[
-                  Text(
-                      "No. of times donated - 5 \nLast Donated - 14/04/2021 \nAlcohalic/Smoker - Yes"),
-                  new Row(
-                    children: <Widget>[
-                      new RaisedButton(
-                        child: Text("Request"),
-                        onPressed: () {},
+                      Text(
+                          "No. of times donated - 5 \nLast Donated - 14/04/2021 \nAlcohalic/Smoker - Yes"),
+                      new Row(
+                        children: <Widget>[
+                          new RaisedButton(
+                            child: Text("Request"),
+                            onPressed: () {},
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ]))
+                    ]))
               ],
             ),
           ),
         ],
       ),
+
+
+
     );
   }
 }

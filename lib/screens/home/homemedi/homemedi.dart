@@ -1,48 +1,33 @@
-import 'package:app/screens/home/homedonor/findonor.dart';
-import 'package:app/screens/home/homedonor/updatelocation.dart';
 import 'package:app/screens/login/login.dart';
-import 'package:app/screens/seeker/donorlist.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/screens/service/auth.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
-import 'dart:collection';
-import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class RequestDonor extends StatefulWidget {
+class HomePageMedi extends StatefulWidget {
+  HomePageMedi({Key key, this.title, this.uid}) : super(key: key);
   final String title;
-  final String uid; //include this
-  RequestDonor({Key key, this.title, this.uid}) : super(key: key);
-
+  final String uid;
   @override
-  _RequestDonorState createState() => _RequestDonorState();
+  _HomePageMediState createState() => _HomePageMediState();
 }
 
-class _RequestDonorState extends State<RequestDonor> {
-  @override
-  void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
-    super.initState();
-  }
+class ObjectToUpdate {
+  String field1 = "email";
+  String field2 = "verified";
 
-  final _nameController = TextEditingController();
-  Set<Marker> _markers = HashSet<Marker>();
-  int _markerIdCounter = 1;
-  bool _isMarker = false;
-  LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
-  GoogleMapController _controller;
-  Location _location = Location();
-  LatLng position;
-  GeoFirePoint seekerlocation;
-  String bloodgrp;
-  String dist;
-  String minage;
+  ObjectToUpdate(this.field1, this.field2);
+}
+
+class _HomePageMediState extends State<HomePageMedi> {
+  TextEditingController bloodgroupInputController;
+  TextEditingController fullNameInputController;
+  TextEditingController ageInputController;
+  TextEditingController emailInputController;
+  DateTime selectedDate = DateTime.now();
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-
   final List<String> bloodgrps = [
     'A+',
     'A-',
@@ -54,33 +39,55 @@ class _RequestDonorState extends State<RequestDonor> {
     'O-'
   ];
 
-  void _setMarkers(LatLng point) {
-    final String markerIdVal = 'marker_id_$_markerIdCounter';
-    _markerIdCounter++;
-    setState(() {
-      print(
-          'Marker | Latitude: ${point.latitude}  Longitude: ${point.longitude}');
-      _markers.add(
-        Marker(
-          markerId: MarkerId(markerIdVal),
-          position: point,
-        ),
-      );
-    });
+  @override
+  void initState() {
+    bloodgroupInputController = new TextEditingController();
+    fullNameInputController = new TextEditingController();
+    ageInputController = new TextEditingController();
+    emailInputController = new TextEditingController();
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    super.initState();
   }
 
-  void _onMapCreated(GoogleMapController _cntlr) {
-    _controller = _cntlr;
-    _location.onLocationChanged.listen((l) {
-      _controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude, l.longitude), zoom: 15),
-        ),
-      );
-    });
+  String emailValidator(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value)) {
+      return 'Email format is invalid';
+    } else {
+      return null;
+    }
   }
 
-  List<Marker> myMarker = [];
+  /*Future<void> updateWhere(String valueForWhere, String valueToUpdate) async {
+    try {
+      List<ObjectToUpdate> items;
+      var query = await Firestore.instance
+          .collection('userInfo')
+          .where(ObjectToUpdate.field1, isEqualTo: valueForWhere)
+          .getDocuments();
+
+      if (query.documents.isEmpty)
+        return;
+      else {
+        items = query.documents
+            .map((item) =>
+                ObjectToUpdate.deserialize(item.data, item.documentID))
+            .toList();
+      }
+
+      for (var item in items) {
+        item.field2 = valueToUpdate;
+        Firestore.instance
+            .collection('CollectionName')
+            .document(item.uid)
+            .updateData(item.serialize());
+      }
+    } catch (e) {
+      print(e);
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -103,20 +110,8 @@ class _RequestDonorState extends State<RequestDonor> {
                       size: 50.0,
                     ),
                   ),
-                  accountName: Text("User"
-                      /*"${variable.data['name']}",
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  */
-                      ),
-                  accountEmail: Text("Email"
-                      /*"${variable.data['name']}",
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  */
-                      ),
+                  accountName: Text('User Name'),
+                  accountEmail: Text('examlpe@gmail.com'),
                 ),
                 ListTile(
                   leading: CircleAvatar(
@@ -134,22 +129,13 @@ class _RequestDonorState extends State<RequestDonor> {
                   leading: CircleAvatar(
                     backgroundColor: Colors.red[400],
                     child: Icon(
-                      Icons.map,
+                      Icons.settings,
                       color: Colors.white,
                       size: 30.0,
                     ),
                   ),
-                  title: Text("Update Location"),
-                  onTap: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UpdateLocation(
-                                  uid: widget.uid,
-                                ))).then((result) {
-                      Navigator.of(context).pop();
-                    });
-                  },
+                  title: Text("Settings"),
+                  onTap: () {},
                 ),
                 Divider(),
                 ListTile(
@@ -189,57 +175,43 @@ class _RequestDonorState extends State<RequestDonor> {
         ),
       ),
       appBar: AppBar(
-        title: Text("Tap Your Location"),
+        title: Text("Verify Donor"),
         backgroundColor: Colors.red[400],
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
+      /*floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red[400],
-        onPressed: () => _regis(),
+        onPressed: () {},
         child: Icon(Icons.search, color: Colors.white),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
-          children: [
-            GoogleMap(
-              initialCameraPosition:
-                  CameraPosition(target: _initialcameraposition),
-              mapType: MapType.normal,
-              onMapCreated: _onMapCreated,
-              markers: Set.from(myMarker),
-              onTap: _handleTap,
-              myLocationEnabled: true,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,*/
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: Colors.red[400],
             ),
-          ],
-        ),
+            title: Text(
+              'Home',
+              style: TextStyle(
+                color: Colors.red[400],
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            title: Text('History'),
+          ),
+        ],
       ),
-    );
-  }
-
-  _handleTap(LatLng tappedPoint) {
-    setState(() {
-      myMarker = [];
-      myMarker.add(Marker(
-        markerId: MarkerId(tappedPoint.toString()),
-        position: tappedPoint,
-      ));
-      position = tappedPoint;
-      print(position);
-      seekerlocation = Geoflutterfire().point(latitude:position.latitude, longitude: position.longitude);
-    });
-  }
-
-  void _regis() async {
-    /*var pos = await _location.getLocation();
-    double lat = pos.latitude;
-    double lng = pos.longitude;*/
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
+      body: ListView(
+        key: _formKey,
+        children: <Widget>[
+          SizedBox(
+            height: 50,
+          ),
+          Container(
             height: MediaQuery.of(context).size.height / 2,
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(top: 62),
@@ -260,12 +232,12 @@ class _RequestDonorState extends State<RequestDonor> {
                   child: TextFormField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Enter the reason',
+                        hintText: 'Full Name',
                       ),
                       validator: (val) =>
-                          val.isEmpty ? 'Enter the reason' : null,
+                          val.isEmpty ? 'Enter Donor Name' : null,
                       onChanged: (val) {
-                        setState(() => _nameController.text = val);
+                        setState(() => fullNameInputController.text = val);
                       }),
                 ),
                 SizedBox(
@@ -285,37 +257,12 @@ class _RequestDonorState extends State<RequestDonor> {
                   child: TextFormField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Enter Maximum distance',
+                        hintText: 'Age',
                       ),
                       validator: (val) =>
-                          val.isEmpty ? 'Enter Maximum distance' : null,
+                          val.isEmpty ? 'Enter Donor Age' : null,
                       onChanged: (val) {
-                        setState(() => dist = val);
-                      }),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: 45,
-                  padding:
-                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 5)
-                      ]),
-                  child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter Minimum Age',
-                      ),
-                      validator: (val) =>
-                          val.isEmpty ? 'Enter Minimum Age' : null,
-                      onChanged: (val) {
-                        setState(() => minage = val);
+                        setState(() => ageInputController.text = val);
                       }),
                 ),
                 SizedBox(
@@ -335,7 +282,7 @@ class _RequestDonorState extends State<RequestDonor> {
                   child: DropdownButtonFormField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Required Blood Group',
+                        hintText: 'Donor Blood Group',
                       ),
                       items: bloodgrps.map((bloodgrp) {
                         return DropdownMenuItem(
@@ -344,33 +291,103 @@ class _RequestDonorState extends State<RequestDonor> {
                         );
                       }).toList(),
                       validator: (val) =>
-                          val.isEmpty ? 'Select blood group' : null,
+                          val.isEmpty ? 'Select donor blood group' : null,
                       onChanged: (val) {
-                        setState(() => bloodgrp = val);
+                        setState(() => bloodgroupInputController.text = val);
                       }),
                 ),
                 SizedBox(
-                  height: 20.0,
+                  height: 5,
                 ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height: 45,
+                  padding:
+                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 5)
+                      ]),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Email',
+                    ),
+                    controller: emailInputController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: emailValidator,
+                  ),
+                ),
+                SizedBox(
+                  height: 5.0,
+                ),
+                /*Container(
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height: 45,
+                  padding:
+                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 5)
+                      ]),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: "${selectedDate.toLocal()}".split(' ')[0],
+                      suffixIcon: IconButton(
+                        onPressed: () => _selectDate(context),
+                        icon: Icon(
+                          Icons.calendar_today,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),*/
                 InkWell(
                   onTap: () async {
-                    final requestid = await Firestore.instance.collection("request").add({
-                      'blood group': bloodgrp,
-                      'email': this.widget.uid,
-                      'location': seekerlocation.data,
-                      'maxdistance': dist,
-                      'min age': minage,
-                      'reason': _nameController.text,
-                    });
+                    /*try {
+                      var query = await Firestore.instance
+                          .collection('UserInfo')
+                          .where("name", isEqualTo: name)
+                          .where("email", isEqualTo: _emailController)
+                          .getDocuments();
+                      var userid = query.documents.documentID.uid;
+                      if (query.documents.isEmpty)
+                        return;
+                      else {
+                        items = query.documents
+                            .map((item) => ObjectToUpdate.deserialize(
+                                item.data, item.documentID))
+                            .toList();
+                      }
+
+                      for (var item in items) {
+                        item.field2 = valueToUpdate;
+                        Firestore.instance
+                            .collection('CollectionName')
+                            .document(item.uid)
+                            .updateData(item.serialize());
+                      }
+                    } catch (e) {
+                      print(e);
+                    }*/
+                    await Firestore.instance
+                        .collection('userInfo')
+                        .document(emailInputController.text)
+                        .updateData({'verified': "Yes"});
                     Navigator.push(
-                      context,
-                    MaterialPageRoute(
-                      builder: (context) => FindDonor(
-                        uid: widget.uid,
-                        requestid : requestid.documentID,
-                          ))).then((result) {
-                        Navigator.of(context).pop();
-                      });
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePageMedi()))
+                        .then((result) {
+                      Navigator.of(context).pop();
+                    });
                   },
                   child: Container(
                     height: 45,
@@ -385,7 +402,7 @@ class _RequestDonorState extends State<RequestDonor> {
                         borderRadius: BorderRadius.all(Radius.circular(50))),
                     child: Center(
                       child: Text(
-                        'Find'.toUpperCase(),
+                        'Verify'.toUpperCase(),
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -394,7 +411,22 @@ class _RequestDonorState extends State<RequestDonor> {
                 ),
               ],
             ),
-          );
-        });
+          ),
+        ],
+      ),
+    );
+  }
+
+  _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate, // Refer step 1
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });
   }
 }

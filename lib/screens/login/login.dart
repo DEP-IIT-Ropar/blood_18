@@ -1,8 +1,7 @@
 import 'package:app/screens/authenticate/signup/signup.dart';
 import 'package:app/screens/authenticate/signup/signupmedi.dart';
 import 'package:app/screens/home/homedonor/home.dart';
-import 'package:app/screens/home/homemedi/verifydonor.dart';
-import 'package:app/screens/home/homemedi/medidash.dart';
+import 'package:app/screens/home/homemedi/homemedi.dart';
 import 'package:app/screens/seeker/loginseek.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +22,13 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
 
+
   @override
   initState() {
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
+    print("1");
     super.initState();
   }
 
@@ -220,9 +221,9 @@ class _LoginPageState extends State<LoginPage> {
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => MediDash(
-                                                      uid: currentUser
-                                                          .user.email,
+                                                builder: (context) =>
+                                                    HomePageMedi(
+                                                      uid: currentUser.user.uid,
                                                     ))))
                                     .catchError((err) => print(err)))
                                 .catchError((err) => print(err));
@@ -235,17 +236,15 @@ class _LoginPageState extends State<LoginPage> {
                                     password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
                                     .collection("userInfo")
-                                    .document(currentUser.user.email)
+                                    .document(currentUser.user.uid)
                                     .get()
                                     .then((DocumentSnapshot result) =>
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => HomePage(
-                                                      /*title:
-                                                          result.data['name'],*/
-                                                      uid: currentUser
-                                                          .user.email,
+
+                                                      uid: currentUser.user.uid,
                                                     ))))
                                     .catchError((err) => print(err)))
                                 .catchError((err) => print(err));
