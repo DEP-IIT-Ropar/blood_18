@@ -102,14 +102,14 @@ class _RequestDonorState extends State<RequestDonor> {
                       size: 50.0,
                     ),
                   ),
-                  accountName: Text("User"
+                  accountName: Text("Donor"
                       /*"${variable.data['name']}",
                     style: TextStyle(
                       color: Colors.black,
                     ),
                   */
                       ),
-                  accountEmail: Text("Email"
+                  accountEmail: Text(widget.uid
                       /*"${variable.data['name']}",
                     style: TextStyle(
                       color: Colors.black,
@@ -353,7 +353,8 @@ class _RequestDonorState extends State<RequestDonor> {
                 ),
                 InkWell(
                   onTap: () async {
-                    final requestid = await Firestore.instance.collection("request").add({
+                    final requestid =
+                        await Firestore.instance.collection("request").add({
                       'blood group': bloodgrp,
                       'email': this.widget.uid,
                       'location': seekerlocation,
@@ -362,14 +363,14 @@ class _RequestDonorState extends State<RequestDonor> {
                       'reason': _nameController.text,
                     });
                     Navigator.push(
-                      context,
-                    MaterialPageRoute(
-                      builder: (context) => FindDonor(
-                        uid: widget.uid,
-                        requestid : requestid.documentID,
-                          ))).then((result) {
-                        Navigator.of(context).pop();
-                      });
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FindDonor(
+                                  uid: widget.uid,
+                                  requestid: requestid.documentID,
+                                ))).then((result) {
+                      Navigator.of(context).pop();
+                    });
                   },
                   child: Container(
                     height: 45,

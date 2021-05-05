@@ -108,14 +108,14 @@ class _UpdateLocationState extends State<UpdateLocation> {
                       size: 50.0,
                     ),
                   ),
-                  accountName: Text("User"
+                  accountName: Text("Donor"
                       /*"${variable.data['name']}",
                     style: TextStyle(
                       color: Colors.black,
                     ),
                   */
                       ),
-                  accountEmail: Text("Email"
+                  accountEmail: Text(widget.uid
                       /*"${variable.data['name']}",
                     style: TextStyle(
                       color: Colors.black,
@@ -150,6 +150,7 @@ class _UpdateLocationState extends State<UpdateLocation> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => UpdateLocation(
+                                  //title: widget.title,
                                   uid: widget.uid,
                                 ))).then((result) {
                       Navigator.of(context).pop();

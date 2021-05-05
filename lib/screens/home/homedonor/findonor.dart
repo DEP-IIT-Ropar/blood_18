@@ -13,7 +13,7 @@ class FindDonor extends StatefulWidget {
 //update the constructor to include the uid
   final String title;
   final String uid;
-  final String requestid;//include this
+  final String requestid; //include this
   FindDonor({Key key, this.title, this.uid, this.requestid}) : super(key: key);
 
   @override
@@ -139,8 +139,11 @@ class _FindDonorState extends State<FindDonor> {
         backgroundColor: Colors.red[400],
         onPressed: () async {
           Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => HomePage()))
-              .then((result) {
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        uid: widget.uid,
+                      ))).then((result) {
             Navigator.of(context).pop();
           });
         },
@@ -179,11 +182,12 @@ class _FindDonorState extends State<FindDonor> {
                       children: <Widget>[
                         new RaisedButton(
                           child: Text("Request"),
-                          onPressed: () async{
-                              await Firestore.instance.collection("request_donor").add({
-
+                          onPressed: () async {
+                            await Firestore.instance
+                                .collection("request_donor")
+                                .add({
                               'donoremail': "exampleemail",
-                              'requestid' : this.widget.requestid,
+                              'requestid': this.widget.requestid,
                             });
                           },
                         ),
