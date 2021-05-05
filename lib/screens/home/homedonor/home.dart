@@ -62,13 +62,14 @@ class _HomePageState extends State<HomePage> {
                       size: 50.0,
                     ),
                   ),
-                  accountName: Text("Donor"
+                  accountName: Text("User"
                       /*"${variable.data['name']}",
                     style: TextStyle(
                       color: Colors.black,
-                    ),*/
+                    ),
+                  */
                       ),
-                  accountEmail: Text(widget.uid
+                  accountEmail: Text("Email"
                       /*"${variable.data['name']}",
                     style: TextStyle(
                       color: Colors.black,
@@ -103,7 +104,6 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => UpdateLocation(
-                                  //title: variable.data['name'],
                                   uid: widget.uid,
                                 ))).then((result) {
                       Navigator.of(context).pop();
@@ -159,7 +159,6 @@ class _HomePageState extends State<HomePage> {
               context,
               MaterialPageRoute(
                   builder: (context) => RequestDonor(
-                        //title: variable.data['name'],
                         uid: widget.uid,
                       ))).then((result) {
             Navigator.of(context).pop();

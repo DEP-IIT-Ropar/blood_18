@@ -431,7 +431,7 @@ class _SignupPageState extends State<SignupPage> {
                                       "alcohalic":
                                           alcohalicInputController.text,
                                       "verified": verifiedInputController.text,
-                                      "#donated": null,
+                                      "#donated": donatednoInputController.text,
                                       "location": null,
                                       "age": ageInputController.text,
                                       "userid": currentUser.user.uid,

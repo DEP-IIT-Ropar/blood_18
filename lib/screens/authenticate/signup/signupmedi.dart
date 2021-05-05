@@ -1,5 +1,4 @@
-import 'package:app/screens/home/homemedi/verifydonor.dart';
-import 'package:app/screens/home/homemedi/medidash.dart';
+import 'package:app/screens/home/homemedi/homemedi.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -307,7 +306,7 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                                     password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
                                     .collection("mediInfo")
-                                    .document(currentUser.user.email)
+                                    .document(currentUser.user.uid)
                                     .setData({
                                       "name": fullNameInputController.text,
                                       "phone": phoneInputController.text,
@@ -319,12 +318,12 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      MediDash(
+                                                      HomePageMedi(
                                                         title:
                                                             fullNameInputController
                                                                 .text,
                                                         uid: currentUser
-                                                            .user.email,
+                                                            .user.uid,
                                                       )),
                                               (_) => false),
                                           fullNameInputController.clear(),
