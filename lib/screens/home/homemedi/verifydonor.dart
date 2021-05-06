@@ -36,6 +36,7 @@ class _VerifyDonorState extends State<VerifyDonor> {
   void initState() {
     fullNameInputController = new TextEditingController();
     bloodgroupInputController = new TextEditingController();
+
     emailInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
@@ -55,106 +56,103 @@ class _VerifyDonorState extends State<VerifyDonor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Expanded(
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                UserAccountsDrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.red[400],
-                  ),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
+        drawer: Drawer(
+          child: Expanded(
+            child: Container(
+              color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  UserAccountsDrawerHeader(
+                    decoration: BoxDecoration(
                       color: Colors.red[400],
-                      size: 50.0,
                     ),
-                  ),
-                  accountName: Text("Medi"),
-                  accountEmail: Text(widget.uid),
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.person_outline,
-                      color: Colors.white,
-                      size: 30.0,
+                    currentAccountPicture: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.red[400],
+                        size: 50.0,
+                      ),
                     ),
+                    accountName: Text("Medi"),
+                    accountEmail: Text(widget.uid),
                   ),
-                  title: Text("Profile Settings"),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.settings,
-                      color: Colors.white,
-                      size: 30.0,
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.red[400],
+                      child: Icon(
+                        Icons.person_outline,
+                        color: Colors.white,
+                        size: 30.0,
+                      ),
                     ),
+                    title: Text("Profile Settings"),
+                    onTap: () {},
                   ),
-                  title: Text("Settings"),
-                  onTap: () {},
-                ),
-                Divider(),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.help_outline,
-                      color: Colors.white,
-                      size: 30.0,
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.red[400],
+                      child: Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                        size: 30.0,
+                      ),
                     ),
+                    title: Text("Settings"),
+                    onTap: () {},
                   ),
-                  title: Text("About us"),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.exit_to_app,
-                      color: Colors.white,
-                      size: 30.0,
+                  Divider(),
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.red[400],
+                      child: Icon(
+                        Icons.help_outline,
+                        color: Colors.white,
+                        size: 30.0,
+                      ),
                     ),
+                    title: Text("About us"),
+                    onTap: () {},
                   ),
-                  title: Text("Logout"),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LoginPage())).then((result) {
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
-              ],
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.red[400],
+                      child: Icon(
+                        Icons.exit_to_app,
+                        color: Colors.white,
+                        size: 30.0,
+                      ),
+                    ),
+                    title: Text("Logout"),
+                    onTap: () {
+                      Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()))
+                          .then((result) {
+                        Navigator.of(context).pop();
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      appBar: AppBar(
-        title: Text("Verify Donor"),
-        backgroundColor: Colors.red[400],
-        centerTitle: true,
-      ),
-      body: ListView(
-        key: _formKey,
-        children: <Widget>[
+        appBar: AppBar(
+          title: Text("Verify Donor"),
+          backgroundColor: Colors.red[400],
+          centerTitle: true,
+        ),
+        body: ListView(key: _formKey, children: <Widget>[
           SizedBox(
             height: 50,
           ),
           Container(
-            height: MediaQuery.of(context).size.height / 2,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(top: 62),
-            child: Column(
-              key: _formKey,
-              children: <Widget>[
+              height: MediaQuery.of(context).size.height / 2,
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.only(top: 62),
+              child: Column(key: _formKey, children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).size.width / 1.2,
                   height: 45,
@@ -237,30 +235,22 @@ class _VerifyDonorState extends State<VerifyDonor> {
                 ),
                 InkWell(
                   onTap: () async {
-                    variable = await Firestore.instance
-                        .collection('userInfo')
-                        .document(emailInputController.text)
-                        .get();
-                    if (variable.data["bloodgroup"] ==
-                            bloodgroupInputController.text &&
-                        variable.data["name"] == fullNameInputController.text) {
-                      try {
-                        await Firestore.instance
-                            .collection('userInfo')
-                            .document(emailInputController.text)
-                            .updateData({'verified': "Yes"});
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MediDash(
-                                      uid: widget.uid,
-                                    ))).then((result) {
-                          Navigator.of(context).pop();
-                        });
-                      } catch (e) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text(e)));
-                      }
+                    try {
+                      await Firestore.instance
+                          .collection('userInfo')
+                          .document(emailInputController.text)
+                          .updateData({'verified': "Yes"});
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MediDash(
+                                    uid: widget.uid,
+                                  ))).then((result) {
+                        Navigator.of(context).pop();
+                      });
+                    } catch (e) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(e)));
                     }
                   },
                   child: Container(
@@ -282,12 +272,8 @@ class _VerifyDonorState extends State<VerifyDonor> {
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                )
+              ]))
+        ]));
   }
 }

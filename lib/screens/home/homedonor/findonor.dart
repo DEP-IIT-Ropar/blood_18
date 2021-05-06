@@ -213,21 +213,19 @@ class _FindDonorState extends State<FindDonor> {
                       child: Column(children: <Widget>[
                     Text(
                         "No. of times donated - 5 \nLast Donated - 10/04/2021 \nAlcohalic/Smoker - NO"),
-                    new Row(
-                      children: <Widget>[
-                        new RaisedButton(
-                          child: Text("Request"),
-                          onPressed: () async {
-                            await Firestore.instance
-                                .collection("request_donor")
-                                .add({
-                              'donoremail': "exampleemail2",
-                              'requestid': request.data['email'],
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                    new Row(children: <Widget>[
+                      new RaisedButton(
+                        child: Text("Request"),
+                        onPressed: () async {
+                          await Firestore.instance
+                              .collection("request_donor")
+                              .add({
+                            'donoremail': "exampleemail2",
+                            'requestid': request.data['email'],
+                          });
+                        },
+                      ),
+                    ])
                   ]))
                 ],
               ),
