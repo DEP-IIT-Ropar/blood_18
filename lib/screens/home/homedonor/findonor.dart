@@ -6,14 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/screens/service/auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class FindDonor extends StatefulWidget {
 //update the constructor to include the uid
   final String title;
-  final String uid; //include this
-  FindDonor({Key key, this.title, this.uid}) : super(key: key);
+  final String uid;
+  final String requestid; //include this
+  FindDonor({Key key, this.title, this.uid, this.requestid}) : super(key: key);
 
   @override
   _FindDonorState createState() => _FindDonorState();
@@ -21,7 +24,43 @@ class FindDonor extends StatefulWidget {
 
 class _FindDonorState extends State<FindDonor> {
   DocumentSnapshot variable;
+  DocumentSnapshot request;
+  Future<QuerySnapshot> donlist;
+  var collectionReference = Firestore.instance.collection('userInfo');
+  final geo = Geoflutterfire();
+  var queryref;
+  Future<List<DocumentSnapshot>> listss;
+  int b = 0;
+
   void database() async {
+    variable = await Firestore.instance
+        .collection('userInfo')
+        .document(widget.uid)
+        .get();
+  }
+
+  void dte() async {
+    request = await Firestore.instance
+        .collection('request')
+        .document(widget.requestid)
+        .get();
+
+    queryref = Firestore.instance
+        .collection('userInfo')
+        .where('age', isGreaterThanOrEqualTo: request.data['min age'])
+        .where('bloodgroup', isEqualTo: request.data['blood group']);
+    listss = geo
+        .collection(collectionRef: queryref)
+        .within(
+            center: request.data['location'],
+            radius: request.data['maxdistance'],
+            field: 'location')
+        .first;
+
+    b = 1;
+  }
+
+  /*void database() async {
     variable = await Firestore.instance
         .collection('userInfo')
         .document(widget.uid)
@@ -36,11 +75,11 @@ class _FindDonorState extends State<FindDonor> {
         Navigator.of(context).pop();
       });
     }
-  }
+  }*/
 
   @override
   void initState() {
-    database();
+    dte();
     super.initState();
   }
 
@@ -138,8 +177,12 @@ class _FindDonorState extends State<FindDonor> {
         backgroundColor: Colors.red[400],
         onPressed: () async {
           Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => HomePage()))
-              .then((result) {
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        //title: variable.data['name'],
+                        uid: this.widget.uid,
+                      ))).then((result) {
             Navigator.of(context).pop();
           });
         },
@@ -162,10 +205,6 @@ class _FindDonorState extends State<FindDonor> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.verified),
-                  Text(
-                    "4.5",
-                    style: TextStyle(color: Colors.green),
-                  ),
                 ],
               ),
               subtitle: Column(
@@ -178,7 +217,14 @@ class _FindDonorState extends State<FindDonor> {
                       children: <Widget>[
                         new RaisedButton(
                           child: Text("Request"),
-                          onPressed: () {},
+                          onPressed: () async {
+                            await Firestore.instance
+                                .collection("request_donor")
+                                .add({
+                              'donoremail': "exampleemail2",
+                              'requestid': request.data['email'],
+                            });
+                          },
                         ),
                       ],
                     ),
@@ -190,10 +236,6 @@ class _FindDonorState extends State<FindDonor> {
           ListTile(
             leading: Icon(Icons.person),
             title: Text("Prakash Raj"),
-            trailing: Text(
-              "4.5",
-              style: TextStyle(color: Colors.green),
-            ),
             subtitle: Column(
               children: <Widget>[
                 Container(

@@ -1,7 +1,8 @@
 import 'package:app/screens/authenticate/signup/signup.dart';
 import 'package:app/screens/authenticate/signup/signupmedi.dart';
 import 'package:app/screens/home/homedonor/home.dart';
-import 'package:app/screens/home/homemedi/homemedi.dart';
+import 'package:app/screens/home/homemedi/verifydonor.dart';
+import 'package:app/screens/home/homemedi/medidash.dart';
 import 'package:app/screens/seeker/loginseek.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -177,13 +178,13 @@ class _LoginPageState extends State<LoginPage> {
                           activeColor: Colors.red[400],
                           onChanged: (val) {
                             setState(() {
-                              radioButtonItem = 'Donor';
+                              radioButtonItem = 'User';
                               id = 2;
                             });
                           },
                         ),
                         Text(
-                          'Donor',
+                          'User',
                           style: new TextStyle(
                             fontSize: 17.0,
                           ),
@@ -219,9 +220,9 @@ class _LoginPageState extends State<LoginPage> {
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HomePageMedi(
-                                                      uid: currentUser.user.uid,
+                                                builder: (context) => MediDash(
+                                                      uid: currentUser
+                                                          .user.email,
                                                     ))))
                                     .catchError((err) => print(err)))
                                 .catchError((err) => print(err));
@@ -234,14 +235,17 @@ class _LoginPageState extends State<LoginPage> {
                                     password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
                                     .collection("userInfo")
-                                    .document(currentUser.user.uid)
+                                    .document(currentUser.user.email)
                                     .get()
                                     .then((DocumentSnapshot result) =>
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => HomePage(
-                                                      uid: currentUser.user.uid,
+                                                      /*title:
+                                                          result.data['name'],*/
+                                                      uid: currentUser
+                                                          .user.email,
                                                     ))))
                                     .catchError((err) => print(err)))
                                 .catchError((err) => print(err));
@@ -331,7 +335,7 @@ showAlertDialog(BuildContext context) {
     },
   );
   Widget optionTwo = SimpleDialogOption(
-    child: const Text('Donor'),
+    child: const Text('User'),
     onPressed: () {
       Navigator.push(
               context, MaterialPageRoute(builder: (context) => SignupPage()))

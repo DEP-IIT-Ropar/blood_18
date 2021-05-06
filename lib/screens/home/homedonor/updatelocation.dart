@@ -9,6 +9,7 @@ import 'package:app/screens/service/auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:collection';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class UpdateLocation extends StatefulWidget {
   final String title;
@@ -42,7 +43,7 @@ class _UpdateLocationState extends State<UpdateLocation> {
   GoogleMapController _controller;
   Location _location = Location();
   LatLng position;
-  GeoPoint donorlocation;
+  GeoFirePoint donorlocation;
   String bloodgrp;
   String dist;
   String minage;
@@ -232,7 +233,8 @@ class _UpdateLocationState extends State<UpdateLocation> {
         position: tappedPoint,
       ));
       position = tappedPoint;
-      donorlocation = GeoPoint(position.latitude, position.longitude);
+      donorlocation = Geoflutterfire()
+          .point(latitude: position.latitude, longitude: position.longitude);
     });
   }
 
@@ -260,7 +262,7 @@ class _UpdateLocationState extends State<UpdateLocation> {
                         await Firestore.instance
                             .collection('userInfo')
                             .document(widget.uid)
-                            .updateData({'location': donorlocation});
+                            .updateData({'location': donorlocation.data});
                         Navigator.push(
                             context,
                             MaterialPageRoute(

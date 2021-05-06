@@ -208,151 +208,153 @@ class _HomeSeekState extends State<HomeSeek> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Container(
-            height: MediaQuery.of(context).size.height / 2,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(top: 62),
-            child: Column(
-              key: _formKey,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: 45,
-                  padding:
-                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 5)
-                      ]),
-                  child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter Your Name',
-                      ),
-                      validator: (val) =>
-                          val.isEmpty ? 'Enter Your Name' : null,
-                      onChanged: (val) {
-                        setState(() => _nameController.text = val);
-                      }),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: 45,
-                  padding:
-                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 5)
-                      ]),
-                  child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter Maximum distance',
-                      ),
-                      validator: (val) =>
-                          val.isEmpty ? 'Enter Maximum distance' : null,
-                      onChanged: (val) {
-                        setState(() => dist = val);
-                      }),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: 45,
-                  padding:
-                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 5)
-                      ]),
-                  child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter Minimum Age',
-                      ),
-                      validator: (val) =>
-                          val.isEmpty ? 'Enter Minimum Age' : null,
-                      onChanged: (val) {
-                        setState(() => minage = val);
-                      }),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: 45,
-                  padding:
-                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 5)
-                      ]),
-                  child: DropdownButtonFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Required Blood Group',
-                      ),
-                      items: bloodgrps.map((bloodgrp) {
-                        return DropdownMenuItem(
-                          value: bloodgrp,
-                          child: Text('$bloodgrp'),
-                        );
-                      }).toList(),
-                      validator: (val) =>
-                          val.isEmpty ? 'Select blood group' : null,
-                      onChanged: (val) {
-                        setState(() => bloodgrp = val);
-                      }),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                InkWell(
-                  onTap: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DonorList(
-                                  user: widget.user,
-                                ))).then((result) {
-                      Navigator.of(context).pop();
-                    });
-                  },
-                  child: Container(
-                    height: 45,
+          return SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 2,
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.only(top: 62),
+              child: Column(
+                key: _formKey,
+                children: <Widget>[
+                  Container(
                     width: MediaQuery.of(context).size.width / 1.2,
+                    height: 45,
+                    padding:
+                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
                     decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.red[400],
-                            Colors.red[400],
-                          ],
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 5)
+                        ]),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter Your Name',
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(50))),
-                    child: Center(
-                      child: Text(
-                        'Find'.toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter Your Name' : null,
+                        onChanged: (val) {
+                          setState(() => _nameController.text = val);
+                        }),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    height: 45,
+                    padding:
+                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 5)
+                        ]),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter Maximum distance',
+                        ),
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter Maximum distance' : null,
+                        onChanged: (val) {
+                          setState(() => dist = val);
+                        }),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    height: 45,
+                    padding:
+                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 5)
+                        ]),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter Minimum Age',
+                        ),
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter Minimum Age' : null,
+                        onChanged: (val) {
+                          setState(() => minage = val);
+                        }),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    height: 45,
+                    padding:
+                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 5)
+                        ]),
+                    child: DropdownButtonFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Required Blood Group',
+                        ),
+                        items: bloodgrps.map((bloodgrp) {
+                          return DropdownMenuItem(
+                            value: bloodgrp,
+                            child: Text('$bloodgrp'),
+                          );
+                        }).toList(),
+                        validator: (val) =>
+                            val.isEmpty ? 'Select blood group' : null,
+                        onChanged: (val) {
+                          setState(() => bloodgrp = val);
+                        }),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DonorList(
+                                    user: widget.user,
+                                  ))).then((result) {
+                        Navigator.of(context).pop();
+                      });
+                    },
+                    child: Container(
+                      height: 45,
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.red[400],
+                              Colors.red[400],
+                            ],
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(50))),
+                      child: Center(
+                        child: Text(
+                          'Find'.toUpperCase(),
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });

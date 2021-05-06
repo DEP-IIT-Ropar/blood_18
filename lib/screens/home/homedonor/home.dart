@@ -3,6 +3,7 @@ import 'package:app/screens/home/homedonor/updatelocation.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -35,6 +36,41 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  bool isSwitched = false;
+  var textValue = 'Switch is OFF';
+  bool _hasBeenPressed = false;
+  bool _hasBeenPressed1 = false;
+
+  void toggleSwitch(bool value) {
+    if (isSwitched == false) {
+      setState(() {
+        isSwitched = true;
+      });
+      setState(() async {
+        final availability = await Firestore.instance
+            .collection('userInfo')
+            .document(widget.uid)
+            .updateData(
+          {'available': true},
+        );
+      });
+      print('Switch Button is ON');
+    } else {
+      setState(() /*async*/ {
+        isSwitched = false;
+      });
+      setState(() async {
+        final availability = await Firestore.instance
+            .collection('userInfo')
+            .document(widget.uid)
+            .updateData(
+          {'available': false},
+        );
+      });
+      print('Switch Button is OFF');
+    }
+  }
+
   @override
   void initState() {
     database();
@@ -62,19 +98,15 @@ class _HomePageState extends State<HomePage> {
                       size: 50.0,
                     ),
                   ),
-                  accountName: Text("User"
-                      /*"${variable.data['name']}",
+                  accountName: Text("Mithilesh"
+                      /*variable.data['name'],
                     style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  */
+                      color: Colors.white,*/
                       ),
-                  accountEmail: Text("Email"
-                      /*"${variable.data['name']}",
+                  accountEmail: Text("mkkrazy456@gmail.com"
+                      /*variable.data['name'],
                     style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  */
+                      color: Colors.white,*/
                       ),
                 ),
                 ListTile(
@@ -109,6 +141,19 @@ class _HomePageState extends State<HomePage> {
                       Navigator.of(context).pop();
                     });
                   },
+                ),
+                ListTile(
+                  trailing: Transform.scale(
+                      scale: 1,
+                      child: Switch(
+                        onChanged: toggleSwitch,
+                        value: isSwitched,
+                        activeColor: Colors.blue,
+                        activeTrackColor: Colors.blueGrey,
+                        inactiveThumbColor: Colors.grey,
+                        inactiveTrackColor: Colors.blueGrey,
+                      )),
+                  title: Text("Availability"),
                 ),
                 Divider(),
                 ListTile(
@@ -166,27 +211,7 @@ class _HomePageState extends State<HomePage> {
         },
         child: Icon(Icons.search, color: Colors.white),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Colors.red[400],
-            ),
-            title: Text(
-              'Home',
-              style: TextStyle(
-                color: Colors.red[400],
-              ),
-            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            title: Text('History'),
-          ),
-        ],
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: ListView(
         children: <Widget>[
           SizedBox(
@@ -203,10 +228,6 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.verified),
-                  Text(
-                    "4.5",
-                    style: TextStyle(color: Colors.green),
-                  ),
                 ],
               ),
               subtitle: Column(
@@ -214,19 +235,23 @@ class _HomePageState extends State<HomePage> {
                   Container(
                       child: Column(children: <Widget>[
                     Text(
-                        "No. of times donated - 5 \nLast Donated - 14/04/2021 \nAlcohalic/Smoker - Yes"),
+                        "No. of times donated - 5 \nDate - 05/05/2021 \nReason - Accident"),
                     new Row(
                       children: <Widget>[
                         new RaisedButton(
-                          child: Text("Accept"),
-                          onPressed: () {},
-                        ),
-                        Divider(
-                          thickness: 20,
-                        ),
-                        new RaisedButton(
-                          child: Text("Decline"),
-                          onPressed: () {},
+                          child: _hasBeenPressed1
+                              ? Text("accepted")
+                              : Text("accept"),
+
+                          // 2
+                          color: _hasBeenPressed1 ? Colors.blue : Colors.grey,
+                          // 3
+                          onPressed: () => {
+                            setState(() {
+                              _hasBeenPressed1 = !_hasBeenPressed1;
+                            }),
+                            showAlertDialog1(context)
+                          },
                         ),
                       ],
                     ),
@@ -238,28 +263,27 @@ class _HomePageState extends State<HomePage> {
           ListTile(
             leading: Icon(Icons.person),
             title: Text("David"),
-            trailing: Text(
-              "4",
-              style: TextStyle(color: Colors.green),
-            ),
             subtitle: Column(
               children: <Widget>[
                 Container(
                     child: Column(children: <Widget>[
                   Text(
-                      "No. of times donated - 5 \nLast Donated - 14/04/2021 \nAlcohalic/Smoker - Yes"),
+                      "No. of times donated - 5 \nDate - 02/05/2021 \nReason - Requirement in surgery"),
                   new Row(
                     children: <Widget>[
                       new RaisedButton(
-                        child: Text("Accept"),
-                        onPressed: () {},
-                      ),
-                      Divider(
-                        thickness: 20,
-                      ),
-                      new RaisedButton(
-                        child: Text("Decline"),
-                        onPressed: () {},
+                        child:
+                            _hasBeenPressed ? Text("accepted") : Text("accept"),
+
+                        // 2
+                        color: _hasBeenPressed ? Colors.blue : Colors.grey,
+                        // 3
+                        onPressed: () => {
+                          setState(() {
+                            _hasBeenPressed = !_hasBeenPressed;
+                          }),
+                          showAlertDialog(context)
+                        },
                       ),
                     ],
                   ),
@@ -275,33 +299,40 @@ class _HomePageState extends State<HomePage> {
 
 showAlertDialog(BuildContext context) {
   // set up the list options
-  Widget optionOne = SimpleDialogOption(
-    child: const Text('YES'),
-    onPressed: () {
-      Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()))
-          .then((result) {
-        Navigator.of(context).pop();
-      });
-    },
-  );
-  Widget optionTwo = SimpleDialogOption(
-    child: const Text('NO'),
-    onPressed: () {
-      Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()))
-          .then((result) {
-        Navigator.of(context).pop();
-      });
-    },
-  );
 
   // set up the SimpleDialog
+  Widget optionOne = SimpleDialogOption(
+    child: const Text('Call 9542035039'),
+    onPressed: () => launch("tel:+919542035039"),
+  );
   SimpleDialog dialog = SimpleDialog(
-    title: const Text('Willing to donate?'),
+    title: const Text('confirm?'),
     children: <Widget>[
       optionOne,
-      optionTwo,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return dialog;
+    },
+  );
+}
+
+showAlertDialog1(BuildContext context) {
+  // set up the list options
+
+  // set up the SimpleDialog
+  Widget optionOne = SimpleDialogOption(
+    child: const Text('Call 6232072978'),
+    onPressed: () => launch("tel:+916232072978"),
+  );
+  SimpleDialog dialog = SimpleDialog(
+    title: const Text('confirm?'),
+    children: <Widget>[
+      optionOne,
     ],
   );
 

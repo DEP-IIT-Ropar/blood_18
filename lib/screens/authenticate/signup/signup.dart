@@ -152,7 +152,7 @@ class _SignupPageState extends State<SignupPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 32, right: 32),
                       child: Text(
-                        'Donor Sign Up',
+                        'User Sign Up',
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
@@ -233,7 +233,12 @@ class _SignupPageState extends State<SignupPage> {
                       child: TextFormField(
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Phone (+xx**********)',
+                          icon: Icon(
+                            Icons.call,
+                            color: Colors.red,
+                          ),
+                          hintText: '  phone number',
+                          prefix: Text('+91'),
                         ),
                         validator: (val) =>
                             val.isEmpty ? 'Enter mobile number' : null,
@@ -431,11 +436,12 @@ class _SignupPageState extends State<SignupPage> {
                                       "alcohalic":
                                           alcohalicInputController.text,
                                       "verified": verifiedInputController.text,
-                                      "#donated": donatednoInputController.text,
+                                      "#donated": null,
                                       "location": null,
                                       "age": ageInputController.text,
                                       "userid": currentUser.user.uid,
                                       "email": currentUser.user.email,
+                                      "available": false,
                                     })
                                     .then((result) => {
                                           Navigator.pushAndRemoveUntil(

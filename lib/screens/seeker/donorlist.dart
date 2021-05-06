@@ -137,27 +137,26 @@ class _DonorListState extends State<DonorList> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.verified),
-                  Text(
-                    "4.5",
-                    style: TextStyle(color: Colors.green),
-                  ),
                 ],
               ),
               subtitle: Column(
                 children: <Widget>[
                   Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
                       child: Column(children: <Widget>[
-                    Text(
-                        "No. of times donated - 5 \nLast Donated - 10/04/2021 \nAlcohalic/Smoker - NO"),
-                    new Row(
-                      children: <Widget>[
-                        new RaisedButton(
-                          child: Text("Request"),
-                          onPressed: () {},
+                        Text(
+                            "No. of times donated - 5 \nLast Donated - 10/04/2021 \nAlcohalic/Smoker - NO"),
+                        new Row(
+                          children: <Widget>[
+                            new RaisedButton(
+                              child: Text("Request"),
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ]))
+                      ]))
                 ],
               ),
             ),
@@ -165,10 +164,6 @@ class _DonorListState extends State<DonorList> {
           ListTile(
             leading: Icon(Icons.person),
             title: Text("Prakash Raj"),
-            trailing: Text(
-              "4.5",
-              style: TextStyle(color: Colors.green),
-            ),
             subtitle: Column(
               children: <Widget>[
                 Container(

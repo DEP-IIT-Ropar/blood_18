@@ -10,6 +10,7 @@ import 'package:app/screens/service/auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:collection';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class RequestDonor extends StatefulWidget {
   final String title;
@@ -35,7 +36,7 @@ class _RequestDonorState extends State<RequestDonor> {
   GoogleMapController _controller;
   Location _location = Location();
   LatLng position;
-  GeoPoint seekerlocation;
+  GeoFirePoint seekerlocation;
   String bloodgrp;
   String dist;
   String minage;
@@ -227,7 +228,8 @@ class _RequestDonorState extends State<RequestDonor> {
       ));
       position = tappedPoint;
       print(position);
-      seekerlocation = GeoPoint(position.latitude, position.longitude);
+      seekerlocation = Geoflutterfire()
+          .point(latitude: position.latitude, longitude: position.longitude);
     });
   }
 
@@ -259,10 +261,10 @@ class _RequestDonorState extends State<RequestDonor> {
                   child: TextFormField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Enter Your Name',
+                        hintText: 'Enter the reason',
                       ),
                       validator: (val) =>
-                          val.isEmpty ? 'Enter Your Name' : null,
+                          val.isEmpty ? 'Enter the reason' : null,
                       onChanged: (val) {
                         setState(() => _nameController.text = val);
                       }),
@@ -352,7 +354,26 @@ class _RequestDonorState extends State<RequestDonor> {
                   height: 20.0,
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () async {
+                    final requestid =
+                        await Firestore.instance.collection("request").add({
+                      'blood group': bloodgrp,
+                      'email': this.widget.uid,
+                      'location': seekerlocation.data,
+                      'maxdistance': dist,
+                      'min age': minage,
+                      'reason': _nameController.text,
+                    });
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FindDonor(
+                                  uid: widget.uid,
+                                  requestid: requestid.documentID,
+                                ))).then((result) {
+                      Navigator.of(context).pop();
+                    });
+                  },
                   child: Container(
                     height: 45,
                     width: MediaQuery.of(context).size.width / 1.2,
