@@ -3,6 +3,7 @@ import 'package:app/screens/authenticate/signup/signupmedi.dart';
 import 'package:app/screens/home/homedonor/home.dart';
 import 'package:app/screens/home/homemedi/verifydonor.dart';
 import 'package:app/screens/home/homemedi/medidash.dart';
+import 'package:app/screens/login/ForgotPassword.dart';
 import 'package:app/screens/seeker/loginseek.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -191,13 +192,21 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ],
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 16, right: 32),
-                        child: Text(
-                          'Forgot Password ?',
-                          style: TextStyle(color: Colors.grey),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ForgotPassword()));
+                      },
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 16, right: 32),
+                          child: Text(
+                            'Forgot Password ?',
+                            style: TextStyle(color: Colors.grey),
+                          ),
                         ),
                       ),
                     ),
