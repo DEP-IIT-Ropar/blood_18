@@ -35,6 +35,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         }),
       );
     } catch (e) {
+      showToast(e.toString(),
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       print(e);
     }
   }
