@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:collection';
+import 'package:toast/toast.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key key}) : super(key: key);
@@ -69,6 +70,10 @@ class _SignupPageState extends State<SignupPage> {
   ];
 
   final List<String> alco_smoker = ['Yes', 'No'];
+
+  Future<void> showToast(String msg, {int duration, int gravity}) {
+    Toast.show(msg, context, duration: duration, gravity: gravity);
+  }
 
   String emailValidator(String value) {
     Pattern pattern =
@@ -335,34 +340,6 @@ class _SignupPageState extends State<SignupPage> {
                             setState(() => alcohalicInputController.text = val);
                           }),
                     ),
-                    /*SizedBox(
-                      height: 5,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 1.2,
-                      height: 45,
-                      padding: EdgeInsets.only(
-                          top: 4, left: 16, right: 16, bottom: 4),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
-                          ]),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            hintText:
-                                "${location.latitude}, ${location.longitude}",
-                            //"location",
-                            suffixIcon: IconButton(
-                              onPressed: () => getLocation(context),
-                              icon: Icon(
-                                Icons.location_city,
-                              ),
-                            ),
-                            errorText: (true) ? "Error true" : "Error false"),
-                      ),
-                    ),*/
                     SizedBox(
                       height: 5,
                     ),
@@ -431,14 +408,13 @@ class _SignupPageState extends State<SignupPage> {
                                       "phone": phoneInputController.text,
                                       "bloodgroup":
                                           bloodgroupInputController.text,
-                                      "last_donated":
-                                          lastdateInputController.text,
+                                      "last_donated": null,
                                       "alcohalic":
                                           alcohalicInputController.text,
-                                      "verified": verifiedInputController.text,
+                                      "verified": "No",
                                       "#donated": null,
                                       "location": null,
-                                      "age": ageInputController.text,
+                                      "age": int.parse(ageInputController.text),
                                       "userid": currentUser.user.uid,
                                       "email": currentUser.user.email,
                                       "available": false,
@@ -469,8 +445,13 @@ class _SignupPageState extends State<SignupPage> {
                                           locationInputController.clear(),
                                           ageInputController.clear()
                                         })
-                                    .catchError((err) => print(err)))
-                                .catchError((err) => print(err));
+                                    .catchError((err) => showToast(
+                                        err.toString(),
+                                        duration: Toast.LENGTH_LONG,
+                                        gravity: Toast.BOTTOM)))
+                                .catchError((err) => showToast(err.toString(),
+                                    duration: Toast.LENGTH_LONG,
+                                    gravity: Toast.BOTTOM));
                           } else {
                             showDialog(
                                 context: context,
@@ -579,10 +560,6 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
     );
-    /*if (picked != null && picked != selectedDate)
-      setState(() {
-        selectedDate = picked;
-      });*/
   }
 
   _handleTap(LatLng tappedPoint) {

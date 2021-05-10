@@ -361,14 +361,15 @@ class _RequestDonorState extends State<RequestDonor> {
                         'blood group': bloodgrp,
                         'email': this.widget.uid,
                         'location': seekerlocation.data,
-                        'maxdistance': dist,
-                        'min age': minage,
+                        'maxdistance': int.parse(dist),
+                        'min age': int.parse(minage),
                         'reason': _nameController.text,
                       });
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => FindDonor(
+                                    title: bloodgrp,
                                     uid: widget.uid,
                                     requestid: requestid.documentID,
                                   ))).then((result) {
