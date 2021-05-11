@@ -20,6 +20,7 @@ public final class GeneratedPluginRegistrant {
     flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.core.FirebaseCorePlugin());
     flutterEngine.getPlugins().add(new io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin());
       com.noeatsleepdev.geoflutterfire.GeoflutterfirePlugin.registerWith(shimPluginRegistry.registrarFor("com.noeatsleepdev.geoflutterfire.GeoflutterfirePlugin"));
+    flutterEngine.getPlugins().add(new com.baseflow.geolocator.GeolocatorPlugin());
     flutterEngine.getPlugins().add(new io.flutter.plugins.googlemaps.GoogleMapsPlugin());
     flutterEngine.getPlugins().add(new com.lyokone.location.LocationPlugin());
       com.jaumard.smsautofill.SmsAutoFillPlugin.registerWith(shimPluginRegistry.registrarFor("com.jaumard.smsautofill.SmsAutoFillPlugin"));

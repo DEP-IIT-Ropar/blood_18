@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/screens/service/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class Donated extends StatefulWidget {
   Donated({Key key, this.title, this.uid}) : super(key: key);
@@ -23,6 +24,8 @@ class _DonatedState extends State<Donated> {
   DateTime selectedDate = DateTime.now();
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  var newFormat = DateFormat("yy-MM-dd");
+  String updatedDt;
 
   @override
   void initState() {
@@ -202,7 +205,8 @@ class _DonatedState extends State<Donated> {
                             firstDate: DateTime(1900),
                             lastDate: DateTime.now());
 
-                        dateCtl.text = date.toString();
+                        updatedDt = newFormat.format(date);
+                        dateCtl.text = updatedDt;
                       },
                     )),
                 SizedBox(
@@ -263,7 +267,7 @@ class _DonatedState extends State<Donated> {
     );
   }
 
-  _selectDate(BuildContext context) async {
+  /*_selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: selectedDate, // Refer step 1
@@ -271,8 +275,9 @@ class _DonatedState extends State<Donated> {
       lastDate: DateTime(2025),
     );
     if (picked != null && picked != selectedDate)
-      setState(() {
-        selectedDate = picked;
-      });
-  }
+      updatedDt = newFormat.format(picked);
+    setState(() {
+      selectedDate = updatedDt;
+    });
+  }*/
 }
