@@ -31,10 +31,12 @@ class _FindDonorState extends State<FindDonor> {
   DocumentSnapshot request;
   Future<QuerySnapshot> donlist;
   var collectionReference = Firestore.instance.collection('userInfo');
+  var requestRef = Firestore.instance.collection('request_donor');
   final geo = Geoflutterfire();
   var querySnapshot;
   var stream;
   var x;
+
   GeoPoint pos;
   double dist;
   GeoFirePoint center;
@@ -70,6 +72,9 @@ class _FindDonorState extends State<FindDonor> {
         .collection(collectionRef: querySnapshot)
         .within(center: center, radius: x, field: 'location')
         .first;
+    stream.sort((a, b) => a.data['distance'].compareTo(b.data['distance']));
+
+
 
     print(stream);
     print(1);
@@ -194,10 +199,16 @@ class _FindDonorState extends State<FindDonor> {
           child: Icon(Icons.home, color: Colors.white),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: ListView.builder(
+        body: Column(
+          children: <Widget>[
+
+            Text('Tap on the request button to request the donors'),
+
+          ListView.builder(
           itemCount: stream.length,
           itemBuilder: (context, index) {
             if (stream[index].data['verified'] == "Yes") {
+              bool _hasBeenPressed1 = false;
               return Card(
                 margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
                 child: ListTile(
@@ -214,11 +225,35 @@ class _FindDonorState extends State<FindDonor> {
                     ],
                   ),
                   title: Text(stream[index].data['name']),
-                  subtitle: Text(
-                      '${roundDouble(stream[index].data['distance'], 1)} km away \nAge-${stream[index].data['age']}  Alco/Smoker-${stream[index].data['alcohalic']}\nLast Donated-${stream[index].data['last_donated']}'),
+                  subtitle: Column(
+                    children: <Widget>[
+
+                      Text(
+                          '${roundDouble(stream[index].data['distance'], 1)} km away \nAge-${stream[index].data['age']}  Alcoholic/Smoker-${stream[index].data['alcohalic']}\nLast Donated-${stream[index].data['last_donated']}'),
+
+                      RaisedButton(child: _hasBeenPressed1
+                          ? Text("requested")
+                          : Text("request"),
+
+                        // 2
+                        color: _hasBeenPressed1 ? Colors.blue : Colors.grey,
+
+                        // 3
+                        onPressed: () => {
+                          setState(() {
+                            _hasBeenPressed1 = !_hasBeenPressed1;
+                          }),
+                          addrequestdonor(
+                            stream[index].data['email'], widget.requestid
+                          ),
+
+                        },)
+                    ],
+                  ),
                 ),
               );
             } else {
+              bool _hasBeenPressed1 = false;
               return Card(
                 margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
                 child: ListTile(
@@ -229,13 +264,36 @@ class _FindDonorState extends State<FindDonor> {
                     //backgroundImage: AssetImage('assets/O+.png'),
                   ),
                   title: Text(stream[index].data['name']),
-                  subtitle: Text(
-                      '${roundDouble(stream[index].data['distance'], 1)} km away \nAge-${stream[index].data['age']}  Alcoholic/Smoker-${stream[index].data['alcohalic']}\nLast Donated-${stream[index].data['last_donated']}'),
+                  subtitle: Column(
+                    children: <Widget>[
+
+                      Text(
+                          '${roundDouble(stream[index].data['distance'], 1)} km away \nAge-${stream[index].data['age']}  Alcoholic/Smoker-${stream[index].data['alcohalic']}\nLast Donated-${stream[index].data['last_donated']}'),
+
+                      RaisedButton(child: _hasBeenPressed1
+                          ? Text("requested")
+                          : Text("request"),
+
+                        // 2
+                        color: _hasBeenPressed1 ? Colors.blue : Colors.grey,
+                        // 3
+                        onPressed: () => {
+                          setState(() {
+                            _hasBeenPressed1 = !_hasBeenPressed1;
+                          }),
+                          addrequestdonor(
+                              stream[index].data['email'], widget.requestid
+                          ),
+
+                        },)
+                    ],
+                  ),
+                  
                 ),
               );
             }
           },
-        ),
+        ),]),
       );
     } else {
       return Scaffold(
@@ -354,6 +412,18 @@ class _FindDonorState extends State<FindDonor> {
     return ((value * mod).round().toDouble() / mod);
   }
 }
+
+void addrequestdonor(String email, String requestId) async{
+  var init = await Firestore.instance.collection('request_donor').add(
+      {
+        'donoremail': email,
+        'requestid': requestId
+      }
+      );
+  
+}
+
+
 
 void showAlertDialog(BuildContext context) {
   // set up the list options

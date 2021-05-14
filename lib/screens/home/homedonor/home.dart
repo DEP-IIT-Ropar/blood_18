@@ -19,11 +19,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DocumentSnapshot variable;
+  bool isSwitched = false ;
   void database() async {
     variable = await Firestore.instance
         .collection('userInfo')
         .document(widget.uid)
         .get();
+    isSwitched = variable.data['available'];
     if (variable.data['location'] == null) {
       Navigator.push(
           context,
@@ -36,10 +38,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  bool isSwitched = false;
+
   var textValue = 'Switch is OFF';
   bool _hasBeenPressed = false;
   bool _hasBeenPressed1 = false;
+
 
   void toggleSwitch(bool value) {
     if (isSwitched == false) {
@@ -79,6 +82,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       drawer: Drawer(
         child: Expanded(
