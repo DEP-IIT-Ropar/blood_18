@@ -41,6 +41,7 @@ class _FindDonorState extends State<FindDonor> {
   double radius = 50;
   Future<List<DocumentSnapshot>> listss;
   int b = 0;
+  var abc;
 
   void database() async {
     variable = await Firestore.instance
@@ -72,17 +73,21 @@ class _FindDonorState extends State<FindDonor> {
 
     print(stream);
     print(1);
+    setState(() {
+      abc = stream;
+    });
   }
 
   @override
   void initState() {
     database();
+    getData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
+
     if (stream != null) {
       return Scaffold(
         drawer: Drawer(
