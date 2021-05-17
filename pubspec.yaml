@@ -43,6 +43,7 @@ dependencies:
   auto_size_text: ^2.0.2
   toast: ^0.1.5
   geolocator: ^7.0.3
+  firebase_messaging: ^5.0.2
 
 dev_dependencies:
   flutter_test:

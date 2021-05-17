@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:collection';
 import 'package:toast/toast.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key key}) : super(key: key);
@@ -15,6 +16,7 @@ class SignupPage extends StatefulWidget {
   @override
   _SignupPageState createState() => _SignupPageState();
 }
+
 
 class _SignupPageState extends State<SignupPage> {
   TextEditingController fullNameInputController;
@@ -30,6 +32,14 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController locationInputController;
   GeoPoint location;
   TextEditingController ageInputController;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  String fcmToken;
+
+  void getToken() async{
+    fcmToken = await _fcm.getToken();
+    print(fcmToken);
+  }
+
 
   @override
   initState() {
@@ -46,6 +56,7 @@ class _SignupPageState extends State<SignupPage> {
     ageInputController = new TextEditingController();
     locationInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
+    getToken();
     super.initState();
   }
 
@@ -416,6 +427,7 @@ class _SignupPageState extends State<SignupPage> {
                               "userid": currentUser.user.uid,
                               "email": currentUser.user.email,
                               "available": false,
+                              "token": fcmToken
                             })
                                 .then((result) => {
                               Navigator.pushAndRemoveUntil(
