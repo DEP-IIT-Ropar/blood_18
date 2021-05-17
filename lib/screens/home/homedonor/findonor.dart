@@ -11,6 +11,8 @@ import 'package:app/screens/service/auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/date_time_patterns.dart';
+import 'package:intl/date_time_patterns.dart';
+import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
@@ -31,16 +33,20 @@ class _FindDonorState extends State<FindDonor> {
   DocumentSnapshot request;
   Future<QuerySnapshot> donlist;
   var collectionReference = Firestore.instance.collection('userInfo');
+  var requestRef = Firestore.instance.collection('request_donor');
   final geo = Geoflutterfire();
   var querySnapshot;
   var stream;
   var x;
+
   GeoPoint pos;
   double dist;
   GeoFirePoint center;
   double radius = 50;
   Future<List<DocumentSnapshot>> listss;
   int b = 0;
+  var abc;
+  var isRequested = [false, false];
 
   void database() async {
     variable = await Firestore.instance
@@ -70,19 +76,25 @@ class _FindDonorState extends State<FindDonor> {
         .within(center: center, radius: x, field: 'location')
         .first;
 
+
+
     print(stream);
     print(1);
+    setState(() {
+      abc = stream;
+    });
   }
 
   @override
   void initState() {
     database();
+    getData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
+
     if (stream != null) {
       return Scaffold(
         drawer: Drawer(
@@ -189,13 +201,21 @@ class _FindDonorState extends State<FindDonor> {
           child: Icon(Icons.home, color: Colors.white),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: ListView.builder(
+        body: Column(
+          children: <Widget>[
+
+            Text('Tap on the request button to request the donors'),
+
+          ListView.builder(
+            shrinkWrap: true,
           itemCount: stream.length,
           itemBuilder: (context, index) {
             if (stream[index].data['verified'] == "Yes") {
+              if(isRequested.length <= index) isRequested.add(false);
               return Card(
                 margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
                 child: ListTile(
+
                   onTap: () => showAlertDialog(context),
                   leading: CircleAvatar(
                     radius: 25.0,
@@ -209,11 +229,37 @@ class _FindDonorState extends State<FindDonor> {
                     ],
                   ),
                   title: Text(stream[index].data['name']),
-                  subtitle: Text(
-                      '${roundDouble(stream[index].data['distance'], 1)} km away \nAge-${stream[index].data['age']}  Alco/Smoker-${stream[index].data['alcohalic']}\nLast Donated-${stream[index].data['last_donated']}'),
+                  subtitle: Column(
+                    children: <Widget>[
+
+                      Text(
+                          '${roundDouble(stream[index].data['distance'], 1)} km away \nAge-${stream[index].data['age']}  Alcoholic/Smoker-${stream[index].data['alcohalic']}\nLast Donated-${stream[index].data['last_donated']}'),
+
+                      new RaisedButton(child: isRequested[index]
+                          ? Text("Requested")
+                          : Text("Request"),
+
+                        // 2
+                        color: isRequested[index] ? Colors.blue : Colors.grey,
+
+                        // 3
+                        onPressed: () => {
+                        if(isRequested[index] == false){
+                          addrequestdonor(
+                              stream[index].data['email'], widget.requestid, stream[index].data['distance']
+                          )},
+                          setState(() {
+                            isRequested[index] = true;
+                          }),
+
+
+                        },)
+                    ],
+                  ),
                 ),
               );
             } else {
+              if(isRequested.length <= index) isRequested.add(false);
               return Card(
                 margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
                 child: ListTile(
@@ -224,13 +270,38 @@ class _FindDonorState extends State<FindDonor> {
                     //backgroundImage: AssetImage('assets/O+.png'),
                   ),
                   title: Text(stream[index].data['name']),
-                  subtitle: Text(
-                      '${roundDouble(stream[index].data['distance'], 1)} km away \nAge-${stream[index].data['age']}  Alcoholic/Smoker-${stream[index].data['alcohalic']}\nLast Donated-${stream[index].data['last_donated']}'),
+                  subtitle: Column(
+                    children: <Widget>[
+
+                      Text(
+                          '${roundDouble(stream[index].data['distance'], 1)} km away \nAge-${stream[index].data['age']}  Alcoholic/Smoker-${stream[index].data['alcohalic']}\nLast Donated-${stream[index].data['last_donated']}'),
+
+                      RaisedButton(child: isRequested[index]
+                          ? Text("Requested")
+                          : Text("Request"),
+
+                        // 2
+                        color: isRequested[index] ? Colors.blue : Colors.grey,
+                        // 3
+                        onPressed: () => {
+                          if(isRequested[index] == false){
+                            addrequestdonor(
+                                stream[index].data['email'], widget.requestid, stream[index].data['distance']
+                            )},
+                          setState(() {
+                            isRequested[index] = true;
+                          }),
+
+
+                        },)
+                    ],
+                  ),
+                  
                 ),
               );
             }
           },
-        ),
+        ),]),
       );
     } else {
       return Scaffold(
@@ -349,6 +420,23 @@ class _FindDonorState extends State<FindDonor> {
     return ((value * mod).round().toDouble() / mod);
   }
 }
+
+void addrequestdonor(String email, String requestId, int distance) async{
+  var now = new DateTime.now();
+  var formatter = new DateFormat('yyyy-MM-dd');
+  String formattedDate = formatter.format(now);
+  await Firestore.instance.collection('request_donor').add(
+      {
+        'donoremail': email,
+        'requestid': requestId,
+        'date': formattedDate,
+        'distance': distance
+      }
+      );
+  
+}
+
+
 
 void showAlertDialog(BuildContext context) {
   // set up the list options

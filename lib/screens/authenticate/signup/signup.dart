@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:collection';
 import 'package:toast/toast.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key key}) : super(key: key);
@@ -15,6 +16,7 @@ class SignupPage extends StatefulWidget {
   @override
   _SignupPageState createState() => _SignupPageState();
 }
+
 
 class _SignupPageState extends State<SignupPage> {
   TextEditingController fullNameInputController;
@@ -30,6 +32,14 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController locationInputController;
   GeoPoint location;
   TextEditingController ageInputController;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  String fcmToken;
+
+  void getToken() async{
+    fcmToken = await _fcm.getToken();
+    print(fcmToken);
+  }
+
 
   @override
   initState() {
@@ -46,6 +56,7 @@ class _SignupPageState extends State<SignupPage> {
     ageInputController = new TextEditingController();
     locationInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
+    getToken();
     super.initState();
   }
 
@@ -129,7 +140,7 @@ class _SignupPageState extends State<SignupPage> {
         child: ListView(
           children: <Widget>[
             Container(
-              width: MediaQuery.of(context).size.width,
+              width: 600,
               height: MediaQuery.of(context).size.height / 3.5,
               decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -138,7 +149,7 @@ class _SignupPageState extends State<SignupPage> {
                     colors: [Colors.red[400], Colors.red[400]],
                   ),
                   borderRadius:
-                      BorderRadius.only(bottomLeft: Radius.circular(90))),
+                  BorderRadius.only(bottomLeft: Radius.circular(90))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -166,7 +177,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height / 1.3,
+              height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.only(top: 62),
               child: Form(
@@ -246,7 +257,7 @@ class _SignupPageState extends State<SignupPage> {
                           prefix: Text('+91'),
                         ),
                         validator: (val) =>
-                            val.isEmpty ? 'Enter mobile number' : null,
+                        val.isEmpty ? 'Enter mobile number' : null,
                         controller: phoneInputController,
                       ),
                     ),
@@ -303,10 +314,10 @@ class _SignupPageState extends State<SignupPage> {
                             );
                           }).toList(),
                           validator: (val) =>
-                              val.isEmpty ? 'Select your blood group' : null,
+                          val.isEmpty ? 'Select your blood group' : null,
                           onChanged: (val) {
                             setState(
-                                () => bloodgroupInputController.text = val);
+                                    () => bloodgroupInputController.text = val);
                           }),
                     ),
                     SizedBox(
@@ -335,7 +346,7 @@ class _SignupPageState extends State<SignupPage> {
                             );
                           }).toList(),
                           validator: (val) =>
-                              val.isEmpty ? 'Select your blood group' : null,
+                          val.isEmpty ? 'Select your blood group' : null,
                           onChanged: (val) {
                             setState(() => alcohalicInputController.text = val);
                           }),
@@ -398,60 +409,59 @@ class _SignupPageState extends State<SignupPage> {
                               confirmPwdInputController.text) {
                             FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
-                                    email: emailInputController.text,
-                                    password: pwdInputController.text)
+                                email: emailInputController.text,
+                                password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
-                                    .collection("userInfo")
-                                    .document(currentUser.user.email)
-                                    .setData({
-                                      "name": fullNameInputController.text,
-                                      "phone": phoneInputController.text,
-                                      "bloodgroup":
-                                          bloodgroupInputController.text,
-                                      "last_donated": null,
-                                      "alcohalic":
-                                          alcohalicInputController.text,
-                                      "verified": "No",
-                                      "#donated": null,
-                                      "location": null,
-                                      "age": int.parse(ageInputController.text),
-                                      "userid": currentUser.user.uid,
-                                      "email": currentUser.user.email,
-                                      "available": false,
-                                    })
-                                    .then((result) => {
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage(
-                                                        title:
-                                                            fullNameInputController
-                                                                .text,
-                                                        uid: currentUser
-                                                            .user.email,
-                                                      )),
-                                              (_) => false),
-                                          fullNameInputController.clear(),
-                                          emailInputController.clear(),
-                                          pwdInputController.clear(),
-                                          confirmPwdInputController.clear(),
-                                          phoneInputController.clear(),
-                                          bloodgroupInputController.clear(),
-                                          lastdateInputController.clear(),
-                                          alcohalicInputController.clear(),
-                                          verifiedInputController.clear(),
-                                          donatednoInputController.clear(),
-                                          locationInputController.clear(),
-                                          ageInputController.clear()
-                                        })
-                                    .catchError((err) => showToast(
-                                        err.toString(),
-                                        duration: Toast.LENGTH_LONG,
-                                        gravity: Toast.BOTTOM)))
+                                .collection("userInfo")
+                                .document(currentUser.user.email)
+                                .setData({
+                              "name": fullNameInputController.text,
+                              "phone": phoneInputController.text,
+                              "bloodgroup": bloodgroupInputController.text,
+                              "last_donated": null,
+                              "alcohalic": alcohalicInputController.text,
+                              "verified": "No",
+                              "#donated": 0,
+                              "location": null,
+                              "age": int.parse(ageInputController.text),
+                              "userid": currentUser.user.uid,
+                              "email": currentUser.user.email,
+                              "available": false,
+                              "token": fcmToken
+                            })
+                                .then((result) => {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomePage(
+                                            title:
+                                            fullNameInputController
+                                                .text,
+                                            uid: currentUser
+                                                .user.email,
+                                          )),
+                                      (_) => false),
+                              fullNameInputController.clear(),
+                              emailInputController.clear(),
+                              pwdInputController.clear(),
+                              confirmPwdInputController.clear(),
+                              phoneInputController.clear(),
+                              bloodgroupInputController.clear(),
+                              lastdateInputController.clear(),
+                              alcohalicInputController.clear(),
+                              verifiedInputController.clear(),
+                              donatednoInputController.clear(),
+                              locationInputController.clear(),
+                              ageInputController.clear()
+                            })
+                                .catchError((err) => showToast(
+                                err.toString(),
+                                duration: Toast.LENGTH_LONG,
+                                gravity: Toast.BOTTOM)))
                                 .catchError((err) => showToast(err.toString(),
-                                    duration: Toast.LENGTH_LONG,
-                                    gravity: Toast.BOTTOM));
+                                duration: Toast.LENGTH_LONG,
+                                gravity: Toast.BOTTOM));
                           } else {
                             showDialog(
                                 context: context,
@@ -483,7 +493,7 @@ class _SignupPageState extends State<SignupPage> {
                               ],
                             ),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(50))),
+                            BorderRadius.all(Radius.circular(50))),
                         child: Center(
                           child: Text(
                             'Sign Up'.toUpperCase(),
@@ -510,9 +520,9 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                         onTap: () async {
                           Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginPage()))
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()))
                               .then((result) {
                             Navigator.of(context).pop();
                           });
@@ -549,7 +559,7 @@ class _SignupPageState extends State<SignupPage> {
           children: [
             GoogleMap(
               initialCameraPosition:
-                  CameraPosition(target: _initialcameraposition),
+              CameraPosition(target: _initialcameraposition),
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
               markers: Set.from(myMarker),

@@ -242,7 +242,7 @@ class _RequestDonorState extends State<RequestDonor> {
         builder: (context) {
           return SingleChildScrollView(
             child: Container(
-              height: MediaQuery.of(context).size.height / 2,
+              height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.only(top: 62),
               child: Column(
@@ -356,10 +356,15 @@ class _RequestDonorState extends State<RequestDonor> {
                   ),
                   InkWell(
                     onTap: () async {
+                      var variable = await Firestore.instance
+                          .collection('userInfo')
+                          .document(widget.uid)
+                          .get();
                       final requestid =
                           await Firestore.instance.collection("request").add({
                         'blood group': bloodgrp,
                         'email': this.widget.uid,
+                        'phone': variable.data['phone'],
                         'location': seekerlocation.data,
                         'maxdistance': int.parse(dist),
                         'min age': int.parse(minage),
