@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -23,12 +24,21 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  String fcmToken;
+  var ussr;
+
+  void getToken() async {
+    fcmToken = await _fcm.getToken();
+    print(fcmToken);
+  }
 
   @override
   initState() {
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
+    getToken();
     super.initState();
   }
 
@@ -258,6 +268,10 @@ class _LoginPageState extends State<LoginPage> {
                                                     ))))
                                     .catchError((err) => print(err)))
                                 .catchError((err) => print(err));
+                            Firestore.instance
+                                .collection("userInfo")
+                                .document(emailInputController.text)
+                                .updateData({'token': fcmToken});
                           }
                         }
                       },

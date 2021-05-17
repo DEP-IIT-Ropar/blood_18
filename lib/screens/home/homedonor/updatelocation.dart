@@ -240,6 +240,7 @@ class _UpdateLocationState extends State<UpdateLocation> {
 
   void _regis() async {
     showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (context) {
           return Container(

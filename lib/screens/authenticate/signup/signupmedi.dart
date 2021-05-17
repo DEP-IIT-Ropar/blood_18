@@ -110,7 +110,7 @@ class _SignupPageMediState extends State<SignupPageMedi> {
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height / 1.3,
+              height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.only(top: 62),
               child: Form(

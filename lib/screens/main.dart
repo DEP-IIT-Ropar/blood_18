@@ -3,8 +3,15 @@ import 'package:app/screens/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:app/screens/home/homedonor/home.dart';
 import 'package:app/screens/login/login.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.red[400], // status bar color
+  ));
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

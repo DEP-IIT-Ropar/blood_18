@@ -132,7 +132,7 @@ class _DonatedState extends State<Donated> {
         ),
       ),
       appBar: AppBar(
-        title: Text("UPDATE"),
+        title: Text("Update"),
         backgroundColor: Colors.red[400],
         centerTitle: true,
       ),

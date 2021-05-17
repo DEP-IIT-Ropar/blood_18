@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:collection';
 import 'package:toast/toast.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key key}) : super(key: key);
@@ -30,6 +31,13 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController locationInputController;
   GeoPoint location;
   TextEditingController ageInputController;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  String fcmToken;
+
+  void getToken() async {
+    fcmToken = await _fcm.getToken();
+    print(fcmToken);
+  }
 
   @override
   initState() {
@@ -46,6 +54,7 @@ class _SignupPageState extends State<SignupPage> {
     ageInputController = new TextEditingController();
     locationInputController = new TextEditingController();
     SystemChrome.setEnabledSystemUIOverlays([]);
+    getToken();
     super.initState();
   }
 
@@ -129,7 +138,7 @@ class _SignupPageState extends State<SignupPage> {
         child: ListView(
           children: <Widget>[
             Container(
-              width: MediaQuery.of(context).size.width,
+              width: 600,
               height: MediaQuery.of(context).size.height / 3.5,
               decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -166,7 +175,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height / 1.3,
+              height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.only(top: 62),
               child: Form(
@@ -412,12 +421,13 @@ class _SignupPageState extends State<SignupPage> {
                                       "alcohalic":
                                           alcohalicInputController.text,
                                       "verified": "No",
-                                      "#donated": null,
+                                      "#donated": 0,
                                       "location": null,
                                       "age": int.parse(ageInputController.text),
                                       "userid": currentUser.user.uid,
                                       "email": currentUser.user.email,
                                       "available": false,
+                                      "token": fcmToken
                                     })
                                     .then((result) => {
                                           Navigator.pushAndRemoveUntil(
