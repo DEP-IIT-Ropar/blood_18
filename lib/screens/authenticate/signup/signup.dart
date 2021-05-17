@@ -406,13 +406,11 @@ class _SignupPageState extends State<SignupPage> {
                                 .setData({
                               "name": fullNameInputController.text,
                               "phone": phoneInputController.text,
-                              "bloodgroup":
-                              bloodgroupInputController.text,
+                              "bloodgroup": bloodgroupInputController.text,
                               "last_donated": null,
-                              "alcohalic":
-                              alcohalicInputController.text,
+                              "alcohalic": alcohalicInputController.text,
                               "verified": "No",
-                              "#donated": null,
+                              "#donated": 0,
                               "location": null,
                               "age": int.parse(ageInputController.text),
                               "userid": currentUser.user.uid,
