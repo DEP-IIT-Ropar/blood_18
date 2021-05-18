@@ -32,7 +32,7 @@ class _FindDonorState extends State<FindDonor> {
   
   
   final FirebaseMessaging _firebaseMessaging= FirebaseMessaging();  
-  FirebaseFunctions functions = FirebaseFunctions.instance          
+      
     
 //     _getToken(){
 //     _firebaseMessaging.getToken().then((deviceToken){
@@ -59,7 +59,7 @@ class _FindDonorState extends State<FindDonor> {
   }
 
   Future<void> sendNotification(String token,String name) async {
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendNotification');
+    HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(functionName:'sendNotification');
     final results = await callable(<String, dynamic>{
     'Token': token,
       'seekerName'=name
