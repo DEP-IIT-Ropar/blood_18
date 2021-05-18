@@ -6,6 +6,7 @@ import 'package:app/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:app/screens/home/homedonor/myrequets.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -274,6 +275,23 @@ class _HomePageState extends State<HomePage> {
                       title: Text("Availability"),
                     ),
                     Divider(),
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red[400],
+                        child: Icon(
+                          Icons.pin_drop,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
+                      ),
+                      title: Text("My requests"),
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Myrequets(uid: widget.uid,))
+                        );
+                      },
+                    ),
                     ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.red[400],
