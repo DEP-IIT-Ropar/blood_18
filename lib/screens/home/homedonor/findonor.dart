@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:intl/intl.dart';
+import 'package:firebase_messaging/firebase_messaging.dart'; // chng by sj
+import 'package:cloud_functions/cloud_functions.dart';   //..
 
 import 'package:geoflutterfire/geoflutterfire.dart';
 
@@ -26,6 +28,46 @@ class FindDonor extends StatefulWidget {
 }
 
 class _FindDonorState extends State<FindDonor> {
+  
+  
+  
+  final FirebaseMessaging _firebaseMessaging= FirebaseMessaging();  
+  FirebaseFunctions functions = FirebaseFunctions.instance          
+    
+//     _getToken(){
+//     _firebaseMessaging.getToken().then((deviceToken){
+//       token=deviceToken;
+//       print("Device Token: $deviceToken");
+//     });
+//   }
+    
+    
+  _configureFirebaseListeners(){
+    _firebaseMessaging.configure(
+      onMessage: (Map<String,dynamic>message) async{
+        print("onMessage: $message");
+      },
+        onLaunch: (Map<String, dynamic> message) async {
+      print("onLaunch: $message");
+
+    },
+    onResume: (Map<String, dynamic> message) async {
+    print("onResume: $message");
+
+    },
+    );
+  }
+
+  Future<void> sendNotification(String token) async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendNotification');
+    final results = await callable(<String, dynamic>{
+    'Token': token});
+
+    print(results);
+  }  
+    
+    //////////////////////////////////////////////
+
   DocumentSnapshot variable;
   DocumentSnapshot request;
   Future<QuerySnapshot> donlist;
@@ -86,6 +128,7 @@ class _FindDonorState extends State<FindDonor> {
   void initState() {
     database();
     getData();
+    _configureFirebaseListeners();
     super.initState();
   }
 
