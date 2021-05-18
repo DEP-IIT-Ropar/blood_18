@@ -6,16 +6,13 @@ import 'package:app/screens/login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:app/screens/service/auth.dart';
+
 import 'package:flutter/widgets.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/date_time_patterns.dart';
-import 'package:intl/date_time_patterns.dart';
+
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
+
 import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:geolocator/geolocator.dart';
+
 
 class FindDonor extends StatefulWidget {
 //update the constructor to include the uid
@@ -246,7 +243,7 @@ class _FindDonorState extends State<FindDonor> {
                         onPressed: () => {
                         if(isRequested[index] == false){
                           addrequestdonor(
-                              stream[index].data['email'], widget.requestid, stream[index].data['distance']
+                              stream[index].data['email'], widget.requestid, stream[index].data['distance'], request.data['seeker age']
                           )},
                           setState(() {
                             isRequested[index] = true;
@@ -286,7 +283,7 @@ class _FindDonorState extends State<FindDonor> {
                         onPressed: () => {
                           if(isRequested[index] == false){
                             addrequestdonor(
-                                stream[index].data['email'], widget.requestid, stream[index].data['distance']
+                                stream[index].data['email'], widget.requestid, stream[index].data['distance'], request.data['seeker age']
                             )},
                           setState(() {
                             isRequested[index] = true;
@@ -421,7 +418,7 @@ class _FindDonorState extends State<FindDonor> {
   }
 }
 
-void addrequestdonor(String email, String requestId, int distance) async{
+void addrequestdonor(String email, String requestId, double distance, int age) async{
   var now = new DateTime.now();
   var formatter = new DateFormat('yyyy-MM-dd');
   String formattedDate = formatter.format(now);
@@ -430,7 +427,8 @@ void addrequestdonor(String email, String requestId, int distance) async{
         'donoremail': email,
         'requestid': requestId,
         'date': formattedDate,
-        'distance': distance
+        'distance': distance,
+        'age': age
       }
       );
   

@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   List<DocumentSnapshot> request = List<DocumentSnapshot>();
   List<DocumentSnapshot> seekers = List<DocumentSnapshot>();
   DocumentSnapshot seeker;
-  var stream;
+  QuerySnapshot stream;
   var variablee;
   var requestId;
   var len;
@@ -54,27 +54,42 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getData() async{
+    if(stream != null) stream = null;
     if(_value == 1){
     stream = await Firestore.instance
         .collection('request_donor')
-        .where('donoremail', isEqualTo: widget.uid).orderBy('distance')
+        .where('donoremail', isEqualTo: widget.uid).orderBy('distance', descending: false)
         .getDocuments();}
     if(_value == 2){
     stream = await Firestore.instance
         .collection('request_donor')
-        .where('donoremail', isEqualTo: widget.uid).orderBy('date')
+        .where('donoremail', isEqualTo: widget.uid).orderBy('date', descending: false)
         .getDocuments();}
+    if(_value == 3){
+      stream = await Firestore.instance
+          .collection('request_donor')
+          .where('donoremail', isEqualTo: widget.uid).orderBy('seeker age', descending: true)
+          .getDocuments();}
+    if(_value == 4){
+      stream = await Firestore.instance
+          .collection('request_donor')
+          .where('donoremail', isEqualTo: widget.uid).orderBy('seeker age', descending: false)
+          .getDocuments();}
 
-
-
+    if(requestId != null) requestId.clear;
+    if(request != null) request = List<DocumentSnapshot>();
+    print(request);
+    if(seekers != null) seekers = List<DocumentSnapshot>();
+    if(isRequested != null) isRequested.clear;
     requestId = stream.documents.map((doc)=>doc.data).toList();
     print(stream);
+    print(requestId);
 
     len = requestId.length;
     int index = 0;
 
     for(index = 0; index < len; index++){
-      print(await Firestore.instance.collection('request').document(requestId[index]['requestid']).get());
+
       var abcd = await Firestore.instance.collection('request').document(requestId[index]['requestid']).get();
       request.add(abcd);
     }
@@ -136,7 +151,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     //getData();
-    if(variable != null && requestId != null && request != null && seekers != null){
+    if(variable != null && requestId != null && request.length > 0 && seekers.length > 0){
       return Scaffold(
         drawer: Drawer(
           child: Expanded(
@@ -283,6 +298,14 @@ class _HomePageState extends State<HomePage> {
                     child: Text("sort by date"),
                     value: 2,
                   ),
+                  DropdownMenuItem(
+                    child: Text("sort by age, old to young"),
+                    value: 3,
+                  ),
+                  DropdownMenuItem(
+                    child: Text("sort by age, young to old"),
+                    value: 4,
+                  ),
 
                 ],
                 onChanged: (value) {
@@ -293,7 +316,7 @@ class _HomePageState extends State<HomePage> {
                 }),
             ListView.builder(
                 shrinkWrap: true,
-                itemCount: request.length,
+                itemCount: requestId.length,
                 itemBuilder: (context, index){
                   if(isRequested.length <= index) isRequested.add(false);
                   return Card(
@@ -309,7 +332,7 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
 
                           Text(
-                              '${roundDouble(requestId[index]['distance'], 1)} km away \nAge-${seekers[index]['age']}  \nNo. of times Donated-${seekers[index]['#donated']}\nreason-${request[index]['reason']}'),
+                              'patients name: ${request[index]['name']}\n${roundDouble(requestId[index]['distance'], 1)} km away \nAge-${request[index]['age']}  \nNo. of times Donated-${seekers[index]['#donated']}\nreason-${request[index]['reason']}'),
 
                           new RaisedButton(child: isRequested[index]
                               ? Text("Accepted")
@@ -321,7 +344,7 @@ class _HomePageState extends State<HomePage> {
                             // 3
                             onPressed: () => {
                               if(isRequested[index] == false){
-                                  showAlertDialog(context,seekers[index]['phone'])
+                                  showAlertDialog(context,request[index]['phone'])
                               },
                               setState(() {
                                 isRequested[index] = true;

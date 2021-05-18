@@ -40,6 +40,8 @@ class _RequestDonorState extends State<RequestDonor> {
   String bloodgrp;
   String dist;
   String minage;
+  String seekername;
+  String seekerage;
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
@@ -252,6 +254,56 @@ class _RequestDonorState extends State<RequestDonor> {
                     width: MediaQuery.of(context).size.width / 1.2,
                     height: 45,
                     padding:
+                    EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 5)
+                        ]),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Enter the seeker's name",
+                        ),
+                        validator: (val) =>
+                        val.isEmpty ? "Enter the seeker's name" : null,
+                        onChanged: (val) {
+                          setState(() => seekername = val);
+                        }),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    height: 45,
+                    padding:
+                    EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 5)
+                        ]),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Enter the seeker's age",
+                        ),
+                        validator: (val) =>
+                        val.isEmpty ? "Enter the seeker's age" : null,
+                        onChanged: (val) {
+                          setState(() => seekerage = val);
+                        }),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    height: 45,
+                    padding:
                         EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(50)),
@@ -262,10 +314,10 @@ class _RequestDonorState extends State<RequestDonor> {
                     child: TextFormField(
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Enter the reason',
+                          hintText: 'Enter the reason and remarks',
                         ),
                         validator: (val) =>
-                            val.isEmpty ? 'Enter the reason' : null,
+                            val.isEmpty ? 'Enter the reason and remarks' : null,
                         onChanged: (val) {
                           setState(() => _nameController.text = val);
                         }),
@@ -287,10 +339,10 @@ class _RequestDonorState extends State<RequestDonor> {
                     child: TextFormField(
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Enter Maximum distance',
+                          hintText: 'Enter Maximum distance in km',
                         ),
                         validator: (val) =>
-                            val.isEmpty ? 'Enter Maximum distance' : null,
+                            val.isEmpty ? 'Enter Maximum distance in km' : null,
                         onChanged: (val) {
                           setState(() => dist = val);
                         }),
@@ -362,13 +414,16 @@ class _RequestDonorState extends State<RequestDonor> {
                           .get();
                       final requestid =
                           await Firestore.instance.collection("request").add({
-                        'blood group': bloodgrp,
-                        'email': this.widget.uid,
-                        'phone': variable.data['phone'],
-                        'location': seekerlocation.data,
-                        'maxdistance': int.parse(dist),
-                        'min age': int.parse(minage),
-                        'reason': _nameController.text,
+                            'blood group': bloodgrp,
+                            'name': seekername,
+                            'seeker age': int.parse(seekerage),
+                            'email': this.widget.uid,
+                            'phone': variable.data['phone'],
+                            'location': seekerlocation.data,
+                            'maxdistance': int.parse(dist),
+                            'min age': int.parse(minage),
+                            'reason': _nameController.text,
+                            
                       });
                       Navigator.push(
                           context,
