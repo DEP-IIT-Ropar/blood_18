@@ -96,7 +96,7 @@ class _MyrequetsState extends State<Myrequets> {
                   children: <Widget> [
                     ListTile(
 
-                      onTap: () => showAlertDialog(context),
+                
 
                       title: Text(
                         '\nBlood group required - ${allRequestData[index]['blood group']}\n',
