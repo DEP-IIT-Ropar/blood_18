@@ -93,8 +93,7 @@ class _ReqstatusState extends State<Reqstatus> {
                   children: <Widget> [
                     ListTile(
 
-                      onTap: () => showAlertDialog(context),
-
+                     
                       title: Text(
                         '\nBlood group required - ${allRequestData[index]['blood group']}\n',
                         style: TextStyle(color: Colors.red[400],fontSize: 20,fontWeight: FontWeight.bold),
