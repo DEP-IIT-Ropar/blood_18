@@ -58,10 +58,12 @@ class _FindDonorState extends State<FindDonor> {
     );
   }
 
-  Future<void> sendNotification(String token) async {
+  Future<void> sendNotification(String token,String name) async {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendNotification');
     final results = await callable(<String, dynamic>{
-    'Token': token});
+    'Token': token,
+      'seekerName'=name
+      });
 
     print(results);
   }  
