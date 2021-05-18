@@ -128,6 +128,7 @@ class _FindDonorState extends State<FindDonor> {
   void initState() {
     database();
     getData();
+    _configureFirebaseListeners();
     super.initState();
   }
 
