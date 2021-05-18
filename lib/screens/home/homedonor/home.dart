@@ -6,7 +6,6 @@ import 'package:app/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:app/screens/home/homedonor/myrequets.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -279,23 +278,6 @@ class _HomePageState extends State<HomePage> {
                       leading: CircleAvatar(
                         backgroundColor: Colors.red[400],
                         child: Icon(
-                          Icons.pin_drop,
-                          color: Colors.white,
-                          size: 30.0,
-                        ),
-                      ),
-                      title: Text("My requests"),
-                      onTap: () async {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Myrequets(uid: widget.uid,))
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.red[400],
-                        child: Icon(
                           Icons.help_outline,
                           color: Colors.white,
                           size: 30.0,
@@ -408,7 +390,7 @@ class _HomePageState extends State<HomePage> {
                             // 3
                             onPressed: () => {
                               if(isRequested[index] == false){
-                                  showAlertDialog(context,request[index]['phone'], request[index]['location']['geopoint']['latitude'] , request[index]['location']['geopoint']['longitude'])
+                                  showAlertDialog(context,request[index]['phone'], request[index]['location']['geopoint'].latitude , request[index]['location']['geopoint'].longitude)
                               },
                               setState(() {
                                 isRequested[index] = true;

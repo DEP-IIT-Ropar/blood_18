@@ -10,9 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:intl/intl.dart';
-import 'package:firebase_messaging/firebase_messaging.dart'; // chng by sj
-import 'package:cloud_functions/cloud_functions.dart';   //..
 
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 
 
@@ -28,49 +28,7 @@ class FindDonor extends StatefulWidget {
 }
 
 class _FindDonorState extends State<FindDonor> {
-  
-  
-  
-  final FirebaseMessaging _firebaseMessaging= FirebaseMessaging();  
-      
-    
-//     _getToken(){
-//     _firebaseMessaging.getToken().then((deviceToken){
-//       token=deviceToken;
-//       print("Device Token: $deviceToken");
-//     });
-//   }
-    
-    
-  _configureFirebaseListeners(){
-    _firebaseMessaging.configure(
-      onMessage: (Map<String,dynamic>message) async{
-        print("onMessage: $message");
-      },
-        onLaunch: (Map<String, dynamic> message) async {
-      print("onLaunch: $message");
-
-    },
-    onResume: (Map<String, dynamic> message) async {
-    print("onResume: $message");
-
-    },
-    );
-  }
-
-  Future<void> sendNotification(String token,String name) async {
-    HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(functionName:'sendNotification');
-    final results = await callable(<String, dynamic>{
-    'Token': token,
-      'seekerName'=name
-      });
-
-    print(results);
-  }  
-    
-    //////////////////////////////////////////////
-
-  DocumentSnapshot variable;
+  DocumentSnapshot variable,variablee;
   DocumentSnapshot request;
   Future<QuerySnapshot> donlist;
   var collectionReference = Firestore.instance.collection('userInfo');
@@ -89,11 +47,41 @@ class _FindDonorState extends State<FindDonor> {
   var abc;
   var isRequested = [false, false];
 
-  void database() async {
-    variable = await Firestore.instance
-        .collection('userInfo')
-        .document(widget.uid)
-        .get();
+  final FirebaseMessaging _firebaseMessaging= FirebaseMessaging();
+
+
+//     _getToken(){
+//     _firebaseMessaging.getToken().then((deviceToken){
+//       token=deviceToken;
+//       print("Device Token: $deviceToken");
+//     });
+//   }
+
+
+  _configureFirebaseListeners(){
+    _firebaseMessaging.configure(
+      onMessage: (Map<String,dynamic>message) async{
+        print("onMessage: $message");
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+
+      },
+    );
+  }
+
+  Future<void> sendNotification(String token,String name) async {
+    HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(functionName:'sendNotification');
+    final results = await callable(<String, dynamic>{
+      'Token': token,
+      'seekerName': name
+    });
+
+    print(results);
   }
 
   Future<void> getData() async {
@@ -126,18 +114,27 @@ class _FindDonorState extends State<FindDonor> {
     });
   }
 
+  void database() async {
+    variable = await Firestore.instance
+        .collection('userInfo')
+        .document(widget.uid)
+        .get();
+    setState(() async{
+      variablee = variable;
+    });
+  }
+
   @override
   void initState() {
     database();
     getData();
-    _configureFirebaseListeners();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    if (stream != null) {
+    if (stream != null && variable != null) {
       return Scaffold(
         drawer: Drawer(
           child: Expanded(
@@ -286,6 +283,7 @@ class _FindDonorState extends State<FindDonor> {
 
                         // 3
                         onPressed: () => {
+                        sendNotification(variable.data['token'], request.data['seeker name']),
                         if(isRequested[index] == false){
                           addrequestdonor(
                               stream[index].data['email'], widget.requestid, stream[index].data['distance'], request.data['seeker age']
@@ -326,6 +324,7 @@ class _FindDonorState extends State<FindDonor> {
                         color: isRequested[index] ? Colors.blue : Colors.grey,
                         // 3
                         onPressed: () => {
+                          sendNotification(variable.data['token'], request.data['seeker name']),
                           if(isRequested[index] == false){
                             addrequestdonor(
                                 stream[index].data['email'], widget.requestid, stream[index].data['distance'], request.data['seeker age']
