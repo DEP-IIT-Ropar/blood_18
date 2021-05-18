@@ -9,6 +9,7 @@ import 'package:app/screens/service/auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:collection';
+import 'package:app/screens/seeker/reqstatus.dart';
 
 class HomeSeek extends StatefulWidget {
   final FirebaseUser user;
@@ -118,7 +119,14 @@ class _HomeSeekState extends State<HomeSeek> {
                     ),
                   ),
                   title: Text("Request Status"),
-                  onTap: () {},
+                  onTap: () {
+                  
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Reqstatus(uid: widget.user.phoneNumber)));
+                    
+                  },
                 ),
                 Divider(),
                 ListTile(
