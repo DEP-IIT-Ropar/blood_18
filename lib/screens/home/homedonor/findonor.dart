@@ -428,7 +428,8 @@ void addrequestdonor(String email, String requestId, double distance, int age) a
         'requestid': requestId,
         'date': formattedDate,
         'distance': distance,
-        'age': age
+        'age': age,
+        'accepted': false
       }
       );
   

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:app/screens/home/homedonor/accepted.dart';
 import 'package:app/screens/home/homedonor/requestdonor.dart';
 import 'package:app/screens/home/homedonor/updatelocation.dart';
 import 'package:app/screens/login/login.dart';
@@ -24,8 +25,9 @@ class _HomePageState extends State<HomePage> {
   DocumentSnapshot seeker;
   QuerySnapshot stream;
   var variablee;
-  var requestId;
+  var requestId, requestiid;
   var len;
+  var lat,long;
   var state, state1;
   int _value = 1;
 
@@ -58,22 +60,30 @@ class _HomePageState extends State<HomePage> {
     if(_value == 1){
     stream = await Firestore.instance
         .collection('request_donor')
-        .where('donoremail', isEqualTo: widget.uid).orderBy('distance', descending: false)
+        .where('donoremail', isEqualTo: widget.uid)
+        .where('accepted', isEqualTo: false)
+        .orderBy('distance', descending: false)
         .getDocuments();}
     if(_value == 2){
     stream = await Firestore.instance
         .collection('request_donor')
-        .where('donoremail', isEqualTo: widget.uid).orderBy('date', descending: false)
+        .where('donoremail', isEqualTo: widget.uid)
+        .where('accepted', isEqualTo: false)
+        .orderBy('date', descending: false)
         .getDocuments();}
     if(_value == 3){
       stream = await Firestore.instance
           .collection('request_donor')
-          .where('donoremail', isEqualTo: widget.uid).orderBy('seeker age', descending: true)
+          .where('donoremail', isEqualTo: widget.uid)
+          .where('accepted', isEqualTo: false)
+          .orderBy('seeker age', descending: true)
           .getDocuments();}
     if(_value == 4){
       stream = await Firestore.instance
           .collection('request_donor')
-          .where('donoremail', isEqualTo: widget.uid).orderBy('seeker age', descending: false)
+          .where('donoremail', isEqualTo: widget.uid)
+          .where('accepted', isEqualTo: false)
+          .orderBy('seeker age', descending: false)
           .getDocuments();}
 
     if(requestId != null) requestId.clear;
@@ -82,6 +92,7 @@ class _HomePageState extends State<HomePage> {
     if(seekers != null) seekers = List<DocumentSnapshot>();
     if(isRequested != null) isRequested.clear;
     requestId = stream.documents.map((doc)=>doc.data).toList();
+    requestiid = stream.documents.map((doc)=>doc.documentID).toList();
     print(stream);
     print(requestId);
 
@@ -91,6 +102,7 @@ class _HomePageState extends State<HomePage> {
     for(index = 0; index < len; index++){
 
       var abcd = await Firestore.instance.collection('request').document(requestId[index]['requestid']).get();
+      print(requestiid[index]);
       request.add(abcd);
     }
     print(request);
@@ -153,118 +165,152 @@ class _HomePageState extends State<HomePage> {
     //getData();
     if(variable != null && requestId != null && request.length > 0 && seekers.length > 0){
       return Scaffold(
-        drawer: Drawer(
-          child: Expanded(
-            child: Container(
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  UserAccountsDrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.red[400],
-                    ),
-                    currentAccountPicture: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.person,
+          drawer: Drawer(
+            child: Expanded(
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    UserAccountsDrawerHeader(
+                      decoration: BoxDecoration(
                         color: Colors.red[400],
-                        size: 50.0,
                       ),
-                    ),
-                    accountName: Text("Mithilesh"
-                      /*variable.data['name'],
+                      currentAccountPicture: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.red[400],
+                          size: 50.0,
+                        ),
+                      ),
+                      accountName: Text("Mithilesh"
+                        /*variable.data['name'],
                     style: TextStyle(
                       color: Colors.white,*/
-                    ),
-                    accountEmail: Text("mkkrazy456@gmail.com"
-                      /*variable.data['name'],
+                      ),
+                      accountEmail: Text("mkkrazy456@gmail.com"
+                        /*variable.data['name'],
                     style: TextStyle(
                       color: Colors.white,*/
-                    ),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.red[400],
-                      child: Icon(
-                        Icons.person_outline,
-                        color: Colors.white,
-                        size: 30.0,
                       ),
                     ),
-                    title: Text("Profile Settings"),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.red[400],
-                      child: Icon(
-                        Icons.map,
-                        color: Colors.white,
-                        size: 30.0,
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red[400],
+                        child: Icon(
+                          Icons.person_outline,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
                       ),
+                      title: Text("Profile Settings"),
+                      onTap: () {},
                     ),
-                    title: Text("Update Location"),
-                    onTap: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UpdateLocation(
-                                uid: widget.uid,
-                              ))).then((result) {
-                        Navigator.of(context).pop();
-                      });
-                    },
-                  ),
-                  ListTile(
-                    trailing: Transform.scale(
-                        scale: 1,
-                        child: Switch(
-                          onChanged: toggleSwitch,
-                          value: isSwitched,
-                          activeColor: Colors.blue,
-                          activeTrackColor: Colors.blueGrey,
-                          inactiveThumbColor: Colors.grey,
-                          inactiveTrackColor: Colors.blueGrey,
-                        )),
-                    title: Text("Availability"),
-                  ),
-                  Divider(),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.red[400],
-                      child: Icon(
-                        Icons.help_outline,
-                        color: Colors.white,
-                        size: 30.0,
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red[400],
+                        child: Icon(
+                          Icons.person_outline,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
                       ),
+                      title: Text("Profile Settings"),
+                      onTap: () {},
                     ),
-                    title: Text("About us"),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.red[400],
-                      child: Icon(
-                        Icons.exit_to_app,
-                        color: Colors.white,
-                        size: 30.0,
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red[400],
+                        child: Icon(
+                          Icons.map,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
                       ),
+                      title: Text("Update Location"),
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UpdateLocation(
+                                  uid: widget.uid,
+                                ))).then((result) {
+                          Navigator.of(context).pop();
+                        });
+                      },
                     ),
-                    title: Text("Logout"),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginPage())).then((result) {
-                        Navigator.of(context).pop();
-                      });
-                    },
-                  ),
-                ],
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red[400],
+                        child: Icon(
+                          Icons.map,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
+                      ),
+                      title: Text("Accepted requests"),
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Accepted(
+                                  uid: widget.uid,
+                                ))).then((result) {
+                          Navigator.of(context).pop();
+                        });
+                      },
+                    ),
+                    ListTile(
+                      trailing: Transform.scale(
+                          scale: 1,
+                          child: Switch(
+                            onChanged: toggleSwitch,
+                            value: isSwitched,
+                            activeColor: Colors.blue,
+                            activeTrackColor: Colors.blueGrey,
+                            inactiveThumbColor: Colors.grey,
+                            inactiveTrackColor: Colors.blueGrey,
+                          )),
+                      title: Text("Availability"),
+                    ),
+                    Divider(),
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red[400],
+                        child: Icon(
+                          Icons.help_outline,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
+                      ),
+                      title: Text("About us"),
+                      onTap: () {},
+                    ),
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red[400],
+                        child: Icon(
+                          Icons.exit_to_app,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
+                      ),
+                      title: Text("Logout"),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()))
+                            .then((result) {
+                          Navigator.of(context).pop();
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
         appBar: AppBar(
           title: Text("Home Page"),
           backgroundColor: Colors.red[400],
@@ -344,7 +390,7 @@ class _HomePageState extends State<HomePage> {
                             // 3
                             onPressed: () => {
                               if(isRequested[index] == false){
-                                  showAlertDialog(context,request[index]['phone'])
+                                  showAlertDialog(context,request[index]['phone'], request[index]['location']['geopoint']['latitude'] , request[index]['location']['geopoint']['longitude'])
                               },
                               setState(() {
                                 isRequested[index] = true;
@@ -468,6 +514,7 @@ class _HomePageState extends State<HomePage> {
                       title: Text("Profile Settings"),
                       onTap: () {},
                     ),
+
                     ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.red[400],
@@ -483,6 +530,27 @@ class _HomePageState extends State<HomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => UpdateLocation(
+                                  uid: widget.uid,
+                                ))).then((result) {
+                          Navigator.of(context).pop();
+                        });
+                      },
+                    ),
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red[400],
+                        child: Icon(
+                          Icons.map,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
+                      ),
+                      title: Text("Accepted requests"),
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Accepted(
                                   uid: widget.uid,
                                 ))).then((result) {
                           Navigator.of(context).pop();
@@ -560,7 +628,7 @@ class _HomePageState extends State<HomePage> {
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           body: Center(
-            child: Text("No Requests"),
+            child: Text("No Requests..."),
           )
       );
     }
@@ -603,18 +671,23 @@ class _HomePageState extends State<HomePage> {
 
 }*/
 
-showAlertDialog(BuildContext context, String phone) {
+showAlertDialog(BuildContext context, String phone, double lat, double long) {
   // set up the list options
 
   // set up the SimpleDialog
-  Widget optionOne = SimpleDialogOption(
+  Widget optionOne = ElevatedButton(
     child: Text('Call $phone'),
     onPressed: () => launch("tel:$phone"),
+  );
+  Widget optionTwo = SimpleDialogOption(
+    child: Text('Get the location'),
+    onPressed: () => launch("http://www.google.com/maps/search/?api=1&query=$lat,$long"),
   );
   SimpleDialog dialog = SimpleDialog(
     title: const Text('confirm?'),
     children: <Widget>[
       optionOne,
+      optionTwo,
     ],
   );
 

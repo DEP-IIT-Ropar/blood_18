@@ -26,6 +26,9 @@ class _DonatedState extends State<Donated> {
   final _formKey = GlobalKey<FormState>();
   var newFormat = DateFormat("yy-MM-dd");
   String updatedDt;
+  var requestid;
+  QuerySnapshot deletion;
+  var deletions,len;
 
   @override
   void initState() {
@@ -180,6 +183,31 @@ class _DonatedState extends State<Donated> {
                   height: 20.0,
                 ),
                 Container(
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height: 45,
+                  padding:
+                  EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 5)
+                      ]),
+                  child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter the request id',
+                      ),
+                      validator: (val) =>
+                      val.isEmpty ? 'Enter the request id' : null,
+                      onChanged: (val) {
+                        setState(() => requestid = val);
+                      }),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Container(
                     width: MediaQuery.of(context).size.width / 1.2,
                     height: 45,
                     padding:
@@ -230,6 +258,21 @@ class _DonatedState extends State<Donated> {
                       '#donated': donatedno,
                       'last_donated': dateCtl.text
                     });
+                    deletion = await Firestore.instance.collection('request_donor').where('requestid', isEqualTo: requestid).getDocuments();
+
+                    deletions = deletion.documents.map((doc)=>doc.documentID).toList();
+                    len = deletions.length;
+                    int index = 0;
+
+                    for(index = 0; index < len; index++){
+                      await Firestore.instance
+                          .collection('request_donor')
+                          .document(deletions[index])
+                          .delete();
+                    }
+
+
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(
