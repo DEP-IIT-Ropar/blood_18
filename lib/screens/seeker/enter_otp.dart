@@ -28,6 +28,7 @@ class _EnterOTPState extends State<EnterOTP> {
     return Scaffold(
       key: _scaffoldkey,
       appBar: AppBar(
+        backgroundColor: Colors.red[400],
         title: Text('OTP Verification'),
       ),
       body: Column(
@@ -58,13 +59,16 @@ class _EnterOTPState extends State<EnterOTP> {
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.getCredential(
-                          verificationId: _verificationCode, smsCode: pin))
+                      verificationId: _verificationCode, smsCode: pin))
                       .then((value) async {
                     if (value.user != null) {
+                      final FirebaseUser user =
+                      await FirebaseAuth.instance.currentUser();
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => HomeSeek()),
-                          (route) => false);
+                          MaterialPageRoute(
+                              builder: (context) => HomeSeek(user: user)),
+                              (route) => false);
                     }
                   });
                 } catch (e) {
@@ -99,9 +103,9 @@ class _EnterOTPState extends State<EnterOTP> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => HomeSeek(
-                            user: value.user,
-                          )),
-                  (route) => false);
+                        user: value.user,
+                      )),
+                      (route) => false);
             }
           });
         },

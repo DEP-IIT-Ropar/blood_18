@@ -16,27 +16,27 @@ class _AuthenticateState extends State<Authenticate> {
     FirebaseAuth.instance
         .currentUser()
         .then((currentUser) => {
-              if (currentUser == null)
-                {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()))
-                }
-              else
-                {
-                  Firestore.instance
-                      .collection("userInfo")
-                      .document(currentUser.uid)
-                      .get()
-                      .then((DocumentSnapshot result) =>
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage(
-                                        uid: currentUser.uid,
-                                      ))))
-                      .catchError((err) => print(err))
-                }
-            })
+      if (currentUser == null)
+        {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => LoginPage()))
+        }
+      else
+        {
+          Firestore.instance
+              .collection("userInfo")
+              .document(currentUser.uid)
+              .get()
+              .then((DocumentSnapshot result) =>
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                        uid: currentUser.uid,
+                      ))))
+              .catchError((err) => print(err))
+        }
+    })
         .catchError((err) => print(err));
     super.initState();
   }

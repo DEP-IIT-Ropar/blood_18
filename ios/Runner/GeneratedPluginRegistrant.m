@@ -10,6 +10,12 @@
 @import cloud_firestore;
 #endif
 
+#if __has_include(<cloud_functions/CloudFunctionsPlugin.h>)
+#import <cloud_functions/CloudFunctionsPlugin.h>
+#else
+@import cloud_functions;
+#endif
+
 #if __has_include(<firebase_auth/FirebaseAuthPlugin.h>)
 #import <firebase_auth/FirebaseAuthPlugin.h>
 #else
@@ -22,8 +28,8 @@
 @import firebase_core;
 #endif
 
-#if __has_include(<firebase_messaging/FirebaseMessagingPlugin.h>)
-#import <firebase_messaging/FirebaseMessagingPlugin.h>
+#if __has_include(<firebase_messaging/FLTFirebaseMessagingPlugin.h>)
+#import <firebase_messaging/FLTFirebaseMessagingPlugin.h>
 #else
 @import firebase_messaging;
 #endif
@@ -52,6 +58,12 @@
 @import location;
 #endif
 
+#if __has_include(<shared_preferences/FLTSharedPreferencesPlugin.h>)
+#import <shared_preferences/FLTSharedPreferencesPlugin.h>
+#else
+@import shared_preferences;
+#endif
+
 #if __has_include(<sms_autofill/SmsAutoFillPlugin.h>)
 #import <sms_autofill/SmsAutoFillPlugin.h>
 #else
@@ -68,6 +80,7 @@
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FLTCloudFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTCloudFirestorePlugin"]];
+  [CloudFunctionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"CloudFunctionsPlugin"]];
   [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
@@ -75,6 +88,7 @@
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
   [FLTGoogleMapsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleMapsPlugin"]];
   [LocationPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocationPlugin"]];
+  [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
   [SmsAutoFillPlugin registerWithRegistrar:[registry registrarForPlugin:@"SmsAutoFillPlugin"]];
   [FLTURLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTURLLauncherPlugin"]];
 }

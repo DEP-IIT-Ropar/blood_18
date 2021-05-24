@@ -1,5 +1,6 @@
-import 'package:app/screens/home/homedonor/findonor.dart';
+import 'package:app/screens/home/homedonor/accepted.dart';
 import 'package:app/screens/home/homedonor/home.dart';
+import 'package:app/screens/home/homedonor/myrequets.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +22,16 @@ class UpdateLocation extends StatefulWidget {
 }
 
 class _UpdateLocationState extends State<UpdateLocation> {
-  DocumentSnapshot variable;
+  DocumentSnapshot variable, variablee;
+  bool isSwitched = false;
   void database() async {
     variable = await Firestore.instance
         .collection('userInfo')
         .document(widget.uid)
         .get();
+    setState(() {
+      variablee = variable;
+    });
   }
 
   @override
@@ -34,6 +39,36 @@ class _UpdateLocationState extends State<UpdateLocation> {
     database();
     SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
+  }
+
+  void toggleSwitch(bool value) {
+    if (isSwitched == false) {
+      setState(() {
+        isSwitched = true;
+      });
+      setState(() async {
+        await Firestore.instance
+            .collection('userInfo')
+            .document(widget.uid)
+            .updateData(
+          {'available': true},
+        );
+      });
+      print('Switch Button is ON');
+    } else {
+      setState(() /*async*/ {
+        isSwitched = false;
+      });
+      setState(() async {
+        await Firestore.instance
+            .collection('userInfo')
+            .document(widget.uid)
+            .updateData(
+          {'available': false},
+        );
+      });
+      print('Switch Button is OFF');
+    }
   }
 
   Set<Marker> _markers = HashSet<Marker>();
@@ -90,139 +125,38 @@ class _UpdateLocationState extends State<UpdateLocation> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(
-        child: Expanded(
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                UserAccountsDrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.red[400],
-                  ),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.red[400],
-                      size: 50.0,
-                    ),
-                  ),
-                  accountName: Text("User"
-                      /*"${variable.data['name']}",
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  */
-                      ),
-                  accountEmail: Text("Email"
-                      /*"${variable.data['name']}",
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  */
-                      ),
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.person_outline,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                  ),
-                  title: Text("Profile Settings"),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.map,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                  ),
-                  title: Text("Update Location"),
-                  onTap: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UpdateLocation(
-                                  uid: widget.uid,
-                                ))).then((result) {
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
-                Divider(),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.help_outline,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                  ),
-                  title: Text("About us"),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red[400],
-                    child: Icon(
-                      Icons.exit_to_app,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                  ),
-                  title: Text("Logout"),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LoginPage())).then((result) {
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
-              ],
-            ),
+    if (variable != null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Tap To Mark Your Location"),
+          backgroundColor: Colors.red[400],
+          centerTitle: true,
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.red[400],
+          onPressed: () => _regis(),
+          child: Icon(Icons.done, color: Colors.white),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            children: [
+              GoogleMap(
+                initialCameraPosition:
+                CameraPosition(target: _initialcameraposition),
+                mapType: MapType.normal,
+                onMapCreated: _onMapCreated,
+                markers: Set.from(myMarker),
+                onTap: _handleTap,
+                myLocationEnabled: true,
+              ),
+            ],
           ),
         ),
-      ),
-      appBar: AppBar(
-        title: Text("Tap Your Location"),
-        backgroundColor: Colors.red[400],
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red[400],
-        onPressed: () => _regis(),
-        child: Icon(Icons.done, color: Colors.white),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
-          children: [
-            GoogleMap(
-              initialCameraPosition:
-                  CameraPosition(target: _initialcameraposition),
-              mapType: MapType.normal,
-              onMapCreated: _onMapCreated,
-              markers: Set.from(myMarker),
-              onTap: _handleTap,
-              myLocationEnabled: true,
-            ),
-          ],
-        ),
-      ),
-    );
+      );
+    }
   }
 
   _handleTap(LatLng tappedPoint) {
@@ -264,14 +198,19 @@ class _UpdateLocationState extends State<UpdateLocation> {
                             .collection('userInfo')
                             .document(widget.uid)
                             .updateData({'location': donorlocation.data});
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Location Updated"),
+                        ));
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => HomePage(
-                                      uid: widget.uid,
-                                    )));
+                                  uid: widget.uid,
+                                )));
                       } catch (e) {
-                        print(e.toString());
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(e.toString()),
+                        ));
                       }
                     },
                   )

@@ -1,3 +1,4 @@
+import 'package:app/loading.dart';
 import 'package:app/screens/home/homedonor/home.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController ageInputController;
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String fcmToken;
+  bool loading = false;
 
   void getToken() async {
     fcmToken = await _fcm.getToken();
@@ -133,7 +135,9 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading
+        ? Loading()
+        : Scaffold(
       body: Container(
         child: ListView(
           children: <Widget>[
@@ -147,7 +151,7 @@ class _SignupPageState extends State<SignupPage> {
                     colors: [Colors.red[400], Colors.red[400]],
                   ),
                   borderRadius:
-                      BorderRadius.only(bottomLeft: Radius.circular(90))),
+                  BorderRadius.only(bottomLeft: Radius.circular(90))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -164,10 +168,12 @@ class _SignupPageState extends State<SignupPage> {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 32, right: 32),
+                      padding:
+                      const EdgeInsets.only(bottom: 32, right: 32),
                       child: Text(
                         'User Sign Up',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
                   ),
@@ -188,10 +194,12 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -215,10 +223,12 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -239,10 +249,12 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -255,7 +267,7 @@ class _SignupPageState extends State<SignupPage> {
                           prefix: Text('+91'),
                         ),
                         validator: (val) =>
-                            val.isEmpty ? 'Enter mobile number' : null,
+                        val.isEmpty ? 'Enter mobile number' : null,
                         controller: phoneInputController,
                       ),
                     ),
@@ -268,10 +280,12 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -295,27 +309,31 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: DropdownButtonFormField(
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Select Blood Group',
                           ),
-                          items: bloodgrps.map((bloodgroupInputController) {
+                          items:
+                          bloodgrps.map((bloodgroupInputController) {
                             return DropdownMenuItem(
                               value: bloodgroupInputController,
                               child: Text('$bloodgroupInputController'),
                             );
                           }).toList(),
-                          validator: (val) =>
-                              val.isEmpty ? 'Select your blood group' : null,
+                          validator: (val) => val.isEmpty
+                              ? 'Select your blood group'
+                              : null,
                           onChanged: (val) {
-                            setState(
-                                () => bloodgroupInputController.text = val);
+                            setState(() =>
+                            bloodgroupInputController.text = val);
                           }),
                     ),
                     SizedBox(
@@ -327,26 +345,31 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: DropdownButtonFormField(
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Are you Alcohalic/Smoker?',
                           ),
-                          items: alco_smoker.map((alcohalicInputController) {
+                          items:
+                          alco_smoker.map((alcohalicInputController) {
                             return DropdownMenuItem(
                               value: alcohalicInputController,
                               child: Text('$alcohalicInputController'),
                             );
                           }).toList(),
-                          validator: (val) =>
-                              val.isEmpty ? 'Select your blood group' : null,
+                          validator: (val) => val.isEmpty
+                              ? 'Select your blood group'
+                              : null,
                           onChanged: (val) {
-                            setState(() => alcohalicInputController.text = val);
+                            setState(() =>
+                            alcohalicInputController.text = val);
                           }),
                     ),
                     SizedBox(
@@ -358,10 +381,12 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         obscureText: true,
@@ -382,10 +407,12 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         obscureText: true,
@@ -405,70 +432,79 @@ class _SignupPageState extends State<SignupPage> {
                         if (_formKey.currentState.validate()) {
                           if (pwdInputController.text ==
                               confirmPwdInputController.text) {
+
                             FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
-                                    email: emailInputController.text,
-                                    password: pwdInputController.text)
+                                email: emailInputController.text,
+                                password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
-                                    .collection("userInfo")
-                                    .document(currentUser.user.email)
-                                    .setData({
-                                      "name": fullNameInputController.text,
-                                      "phone": phoneInputController.text,
-                                      "bloodgroup":
-                                          bloodgroupInputController.text,
-                                      "last_donated": null,
-                                      "alcohalic":
-                                          alcohalicInputController.text,
-                                      "verified": "No",
-                                      "#donated": 0,
-                                      "location": null,
-                                      "age": int.parse(ageInputController.text),
-                                      "userid": currentUser.user.uid,
-                                      "email": currentUser.user.email,
-                                      "available": false,
-                                      "token": fcmToken
-                                    })
-                                    .then((result) => {
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage(
-                                                        title:
-                                                            fullNameInputController
-                                                                .text,
-                                                        uid: currentUser
-                                                            .user.email,
-                                                      )),
-                                              (_) => false),
-                                          fullNameInputController.clear(),
-                                          emailInputController.clear(),
-                                          pwdInputController.clear(),
-                                          confirmPwdInputController.clear(),
-                                          phoneInputController.clear(),
-                                          bloodgroupInputController.clear(),
-                                          lastdateInputController.clear(),
-                                          alcohalicInputController.clear(),
-                                          verifiedInputController.clear(),
-                                          donatednoInputController.clear(),
-                                          locationInputController.clear(),
-                                          ageInputController.clear()
-                                        })
-                                    .catchError((err) => showToast(
-                                        err.toString(),
-                                        duration: Toast.LENGTH_LONG,
-                                        gravity: Toast.BOTTOM)))
-                                .catchError((err) => showToast(err.toString(),
-                                    duration: Toast.LENGTH_LONG,
-                                    gravity: Toast.BOTTOM));
+                                .collection("userInfo")
+                                .document(currentUser.user.email)
+                                .setData({
+                              "name":
+                              fullNameInputController.text,
+                              "phone": phoneInputController.text,
+                              "bloodgroup":
+                              bloodgroupInputController.text,
+                              "last_donated": null,
+                              "alcohalic":
+                              alcohalicInputController.text,
+                              "verified": "No",
+                              "#donated": 0,
+                              "location": null,
+                              "age": int.parse(
+                                  ageInputController.text),
+                              "userid": currentUser.user.uid,
+                              "email": currentUser.user.email,
+                              "available": true,
+                              "token": fcmToken
+                            })
+                                .then((result) => {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomePage(
+                                            title:
+                                            fullNameInputController
+                                                .text,
+                                            uid: currentUser
+                                                .user.email,
+                                          )),
+                                      (_) => false),
+                              fullNameInputController.clear(),
+                              emailInputController.clear(),
+                              pwdInputController.clear(),
+                              confirmPwdInputController
+                                  .clear(),
+                              phoneInputController.clear(),
+                              bloodgroupInputController
+                                  .clear(),
+                              lastdateInputController.clear(),
+                              alcohalicInputController
+                                  .clear(),
+                              verifiedInputController.clear(),
+                              donatednoInputController
+                                  .clear(),
+                              locationInputController.clear(),
+                              ageInputController.clear()
+                            })
+                                .catchError((err) => showToast(
+                                err.toString(),
+                                duration: Toast.LENGTH_LONG,
+                                gravity: Toast.BOTTOM)))
+                                .catchError((err) => showToast(
+                                err.toString(),
+                                duration: Toast.LENGTH_LONG,
+                                gravity: Toast.BOTTOM));
                           } else {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text("Error"),
-                                    content: Text("The passwords do not match"),
+                                    content: Text(
+                                        "The passwords do not match"),
                                     actions: <Widget>[
                                       FlatButton(
                                         child: Text("Close"),
@@ -493,7 +529,7 @@ class _SignupPageState extends State<SignupPage> {
                               ],
                             ),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(50))),
+                            BorderRadius.all(Radius.circular(50))),
                         child: Center(
                           child: Text(
                             'Sign Up'.toUpperCase(),
@@ -508,25 +544,24 @@ class _SignupPageState extends State<SignupPage> {
                       height: 20,
                     ),
                     InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Have an account ?"),
-                            Text(
-                              "Login",
-                              style: TextStyle(color: Colors.red[400]),
-                            ),
-                          ],
-                        ),
-                        onTap: () async {
-                          Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginPage()))
-                              .then((result) {
-                            Navigator.of(context).pop();
-                          });
-                        }),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Have an account ?"),
+                          Text(
+                            "Login",
+                            style: TextStyle(color: Colors.red[400]),
+                          ),
+                        ],
+                      ),
+                      onTap: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -559,7 +594,7 @@ class _SignupPageState extends State<SignupPage> {
           children: [
             GoogleMap(
               initialCameraPosition:
-                  CameraPosition(target: _initialcameraposition),
+              CameraPosition(target: _initialcameraposition),
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
               markers: Set.from(myMarker),

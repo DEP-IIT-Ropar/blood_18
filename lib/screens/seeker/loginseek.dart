@@ -25,7 +25,7 @@ class _LoginSeekState extends State<LoginSeek> {
                     colors: [Colors.red, Colors.red],
                   ),
                   borderRadius:
-                      BorderRadius.only(bottomLeft: Radius.circular(90))),
+                  BorderRadius.only(bottomLeft: Radius.circular(90))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -66,7 +66,7 @@ class _LoginSeekState extends State<LoginSeek> {
                     width: MediaQuery.of(context).size.width / 1.2,
                     height: 45,
                     padding:
-                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                    EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                         color: Colors.white,

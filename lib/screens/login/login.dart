@@ -1,7 +1,7 @@
+import 'package:app/loading.dart';
 import 'package:app/screens/authenticate/signup/signup.dart';
 import 'package:app/screens/authenticate/signup/signupmedi.dart';
 import 'package:app/screens/home/homedonor/home.dart';
-import 'package:app/screens/home/homemedi/verifydonor.dart';
 import 'package:app/screens/home/homemedi/medidash.dart';
 import 'package:app/screens/login/ForgotPassword.dart';
 import 'package:app/screens/seeker/loginseek.dart';
@@ -27,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String fcmToken;
   var ussr;
+  bool loading = false;
 
   void getToken() async {
     fcmToken = await _fcm.getToken();
@@ -65,7 +66,9 @@ class _LoginPageState extends State<LoginPage> {
   int id = 1;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading
+        ? Loading()
+        : Scaffold(
       body: Container(
         child: ListView(
           children: <Widget>[
@@ -79,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                     colors: [Colors.red[400], Colors.red[400]],
                   ),
                   borderRadius:
-                      BorderRadius.only(bottomLeft: Radius.circular(90))),
+                  BorderRadius.only(bottomLeft: Radius.circular(90))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -96,10 +99,12 @@ class _LoginPageState extends State<LoginPage> {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 32, right: 32),
+                      padding:
+                      const EdgeInsets.only(bottom: 32, right: 32),
                       child: Text(
                         'Login',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
                   ),
@@ -120,10 +125,12 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         controller: emailInputController,
@@ -146,10 +153,12 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         controller: pwdInputController,
@@ -212,7 +221,8 @@ class _LoginPageState extends State<LoginPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 16, right: 32),
+                          padding:
+                          const EdgeInsets.only(top: 16, right: 32),
                           child: Text(
                             'Forgot Password ?',
                             style: TextStyle(color: Colors.grey),
@@ -227,47 +237,67 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () async {
                         if (radioButtonItem == 'Medical Staff') {
                           if (_formKey.currentState.validate()) {
+
                             FirebaseAuth.instance
                                 .signInWithEmailAndPassword(
-                                    email: emailInputController.text,
-                                    password: pwdInputController.text)
+                                email: emailInputController.text,
+                                password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
-                                    .collection("mediInfo")
-                                    .document(currentUser.user.uid)
-                                    .get()
-                                    .then((DocumentSnapshot result) =>
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => MediDash(
-                                                      uid: currentUser
-                                                          .user.email,
-                                                    ))))
-                                    .catchError((err) => print(err)))
-                                .catchError((err) => print(err));
+                                .collection("mediInfo")
+                                .document(currentUser.user.uid)
+                                .get()
+                                .then((DocumentSnapshot result) =>
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MediDash(
+                                              uid: currentUser
+                                                  .user.email,
+                                            ))))
+                                .catchError((err) =>
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(err.toString()),
+                                ))))
+                                .catchError((err) =>
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(err.toString()),
+                                )));
                           }
                         } else {
                           if (_formKey.currentState.validate()) {
+
                             FirebaseAuth.instance
                                 .signInWithEmailAndPassword(
-                                    email: emailInputController.text,
-                                    password: pwdInputController.text)
+                                email: emailInputController.text,
+                                password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
-                                    .collection("userInfo")
-                                    .document(currentUser.user.email)
-                                    .get()
-                                    .then((DocumentSnapshot result) =>
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                      /*title:
+                                .collection("userInfo")
+                                .document(currentUser.user.email)
+                                .get()
+                                .then((DocumentSnapshot result) =>
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            HomePage(
+                                              /*title:
                                                           result.data['name'],*/
-                                                      uid: currentUser
-                                                          .user.email,
-                                                    ))))
-                                    .catchError((err) => print(err)))
-                                .catchError((err) => print(err));
+                                              uid: currentUser
+                                                  .user.email,
+                                            ))))
+                                .catchError((err) =>
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(err.toString()),
+                                ))))
+                                .catchError((err) =>
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(err.toString()),
+                                )));
                             Firestore.instance
                                 .collection("userInfo")
                                 .document(emailInputController.text)
@@ -286,7 +316,7 @@ class _LoginPageState extends State<LoginPage> {
                               ],
                             ),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(50))),
+                            BorderRadius.all(Radius.circular(50))),
                         child: Center(
                           child: Text(
                             'Login'.toUpperCase(),
@@ -351,7 +381,7 @@ showAlertDialog(BuildContext context) {
     child: const Text('Medical Staff'),
     onPressed: () {
       Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SignupPageMedi()))
+          MaterialPageRoute(builder: (context) => SignupPageMedi()))
           .then((result) {
         Navigator.of(context).pop();
       });
@@ -361,7 +391,7 @@ showAlertDialog(BuildContext context) {
     child: const Text('User'),
     onPressed: () {
       Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SignupPage()))
+          context, MaterialPageRoute(builder: (context) => SignupPage()))
           .then((result) {
         Navigator.of(context).pop();
       });

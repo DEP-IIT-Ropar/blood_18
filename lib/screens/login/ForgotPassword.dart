@@ -93,7 +93,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 child: Text('Sign In'),
                 onPressed: () {
                   Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()))
+                      MaterialPageRoute(builder: (context) => LoginPage()))
                       .then((result) {
                     Navigator.of(context).pop();
                   });

@@ -1,4 +1,4 @@
-import 'package:app/screens/home/homemedi/verifydonor.dart';
+import 'package:app/loading.dart';
 import 'package:app/screens/home/homemedi/medidash.dart';
 import 'package:app/screens/login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,6 +35,7 @@ class _SignupPageMediState extends State<SignupPageMedi> {
   }
 
   bool _success;
+  bool loading = false;
   final _formKey = GlobalKey<FormState>();
   final List<String> hospitals = [
     'Ropar Civil',
@@ -68,7 +69,9 @@ class _SignupPageMediState extends State<SignupPageMedi> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading
+        ? Loading()
+        : Scaffold(
       body: Container(
         child: ListView(
           children: <Widget>[
@@ -82,7 +85,7 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                     colors: [Colors.red[400], Colors.red[400]],
                   ),
                   borderRadius:
-                      BorderRadius.only(bottomLeft: Radius.circular(90))),
+                  BorderRadius.only(bottomLeft: Radius.circular(90))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -99,10 +102,12 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 32, right: 32),
+                      padding:
+                      const EdgeInsets.only(bottom: 32, right: 32),
                       child: Text(
                         'Medical Sign Up',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
                   ),
@@ -123,10 +128,12 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -150,10 +157,12 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -174,18 +183,25 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Phone (+xx**********)',
+                          icon: Icon(
+                            Icons.call,
+                            color: Colors.red,
+                          ),
+                          hintText: '  phone number',
+                          prefix: Text('+91'),
                         ),
                         validator: (val) =>
-                            val.isEmpty ? 'Enter mobile number' : null,
+                        val.isEmpty ? 'Enter mobile number' : null,
                         controller: phoneInputController,
                       ),
                     ),
@@ -198,10 +214,12 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: DropdownButtonFormField(
                           decoration: InputDecoration(
@@ -215,9 +233,10 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                             );
                           }).toList(),
                           validator: (val) =>
-                              val.isEmpty ? 'Select your hospital' : null,
+                          val.isEmpty ? 'Select your hospital' : null,
                           onChanged: (val) {
-                            setState(() => hospitalInputController.text = val);
+                            setState(
+                                    () => hospitalInputController.text = val);
                           }),
                     ),
                     SizedBox(
@@ -229,10 +248,12 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                           decoration: InputDecoration(
@@ -240,9 +261,10 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                             hintText: 'Id. No.',
                           ),
                           validator: (val) =>
-                              val.isEmpty ? 'Enter your Id. No.' : null,
+                          val.isEmpty ? 'Enter your Id. No.' : null,
                           onChanged: (val) {
-                            setState(() => idNoInputController.text = val);
+                            setState(
+                                    () => idNoInputController.text = val);
                           }),
                     ),
                     SizedBox(
@@ -254,10 +276,12 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         obscureText: true,
@@ -278,10 +302,12 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 5)
                           ]),
                       child: TextFormField(
                         obscureText: true,
@@ -301,41 +327,45 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                         if (_formKey.currentState.validate()) {
                           if (pwdInputController.text ==
                               confirmPwdInputController.text) {
+
                             FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
-                                    email: emailInputController.text,
-                                    password: pwdInputController.text)
+                                email: emailInputController.text,
+                                password: pwdInputController.text)
                                 .then((currentUser) => Firestore.instance
-                                    .collection("mediInfo")
-                                    .document(currentUser.user.email)
-                                    .setData({
-                                      "name": fullNameInputController.text,
-                                      "phone": phoneInputController.text,
-                                      "hospital": hospitalInputController.text,
-                                      "id_no": idNoInputController.text,
-                                    })
-                                    .then((result) => {
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MediDash(
-                                                        title:
-                                                            fullNameInputController
-                                                                .text,
-                                                        uid: currentUser
-                                                            .user.email,
-                                                      )),
-                                              (_) => false),
-                                          fullNameInputController.clear(),
-                                          emailInputController.clear(),
-                                          pwdInputController.clear(),
-                                          confirmPwdInputController.clear(),
-                                          phoneInputController.clear(),
-                                          hospitalInputController.clear(),
-                                          idNoInputController.clear()
-                                        })
-                                    .catchError((err) => print(err)))
+                                .collection("mediInfo")
+                                .document(currentUser.user.email)
+                                .setData({
+                              "name":
+                              fullNameInputController.text,
+                              "phone": phoneInputController.text,
+                              "hospital":
+                              hospitalInputController.text,
+                              "id_no": idNoInputController.text,
+                            })
+                                .then((result) => {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          MediDash(
+                                            title:
+                                            fullNameInputController
+                                                .text,
+                                            uid: currentUser
+                                                .user.email,
+                                          )),
+                                      (_) => false),
+                              fullNameInputController.clear(),
+                              emailInputController.clear(),
+                              pwdInputController.clear(),
+                              confirmPwdInputController
+                                  .clear(),
+                              phoneInputController.clear(),
+                              hospitalInputController.clear(),
+                              idNoInputController.clear()
+                            })
+                                .catchError((err) => print(err)))
                                 .catchError((err) => print(err));
                           } else {
                             showDialog(
@@ -343,7 +373,8 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text("Error"),
-                                    content: Text("The passwords do not match"),
+                                    content: Text(
+                                        "The passwords do not match"),
                                     actions: <Widget>[
                                       FlatButton(
                                         child: Text("Close"),
@@ -368,7 +399,7 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                               ],
                             ),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(50))),
+                            BorderRadius.all(Radius.circular(50))),
                         child: Center(
                           child: Text(
                             'Sign Up'.toUpperCase(),
@@ -383,25 +414,24 @@ class _SignupPageMediState extends State<SignupPageMedi> {
                       height: 20,
                     ),
                     InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Have an account ?"),
-                            Text(
-                              "Login",
-                              style: TextStyle(color: Colors.red[400]),
-                            ),
-                          ],
-                        ),
-                        onTap: () async {
-                          Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginPage()))
-                              .then((result) {
-                            Navigator.of(context).pop();
-                          });
-                        }),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Have an account ?"),
+                          Text(
+                            "Login",
+                            style: TextStyle(color: Colors.red[400]),
+                          ),
+                        ],
+                      ),
+                      onTap: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
+                      },
+                    ),
                   ],
                 ),
               ),
