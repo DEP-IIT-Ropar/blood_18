@@ -1,4 +1,4 @@
-# app
+# Blood donor/seeker app
 
 A new Flutter project.
 
